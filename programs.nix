@@ -23,6 +23,7 @@
     neovim
     git
     curl
+    adwaita-icon-theme
   ];
 
   # My Traceroute, combines the functionality of the 'ping' and 'traceroute' into a single interface.

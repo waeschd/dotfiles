@@ -10,12 +10,38 @@
 	neovim
 	wget
         vivaldi
-        code
+        vscode
         gimp
         distrobox
         gnome-boxes
         papers
+        eog
+        gnome-calculator
+	ffmpeg
+        baobab
+        gnome-disk-utility
         fish
+	ptyxis
+	nautilus
+	mission-center
+	foliate
+	czkawka
+	gnome-frog
+	distroshelf
+	spotify
+	morphosis
+	constrict
+	upscaler
+	devtoolbox
+	freecad
+	localsend
+	thunderbird
+	signal-desktop
+	zotero
+	zoom-us
+	obs-studio
+	nextcloud-client
+	onlyoffice-desktopeditors
       ];
     };
   };
