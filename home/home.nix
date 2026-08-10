@@ -21,10 +21,11 @@
     gnome-boxes
     papers
     eog
-    gnome-calculator
     ffmpeg
     baobab
+    gnome-calculator
     gnome-disk-utility
+    gnome-text-editor
     fish
     ptyxis
     nautilus

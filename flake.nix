@@ -23,22 +23,21 @@
           home-manager = {
             useGlobalPkgs = true;
             useUserPackages = true;
-            users.seru = import ./home.nix;
+            users.seru = import ./home/home.nix;
             backupFileExtension = "backup";
           };
         }
 
         # 2. Local Modules
-        ./hardware-configuration.nix
-
-        ./bootloader.nix
-        ./configuration.nix
-        ./desktop_environment.nix
-        ./flatpak.nix
-        ./luks.nix
-        ./networking.nix
-        ./programs.nix
-        ./users.nix
+        ./system/hardware-configuration.nix
+        ./system/bootloader.nix
+        ./system/configuration.nix
+        ./system/desktop_environment.nix
+        ./system/flatpak.nix
+        ./system/luks.nix
+        ./system/networking.nix
+        ./system/programs.nix
+        ./system/users.nix
       ];
     };
   };
