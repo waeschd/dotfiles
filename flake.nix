@@ -38,7 +38,7 @@
         ./luks.nix
         ./networking.nix
         ./programs.nix
-        ./user.nix
+        ./users.nix
       ];
     };
   };
