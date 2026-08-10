@@ -34,10 +34,4 @@
     plasma-systemmonitor
   ];
   # ---------------------- #
-
-  # ----- Fonts ------- #
-  fonts.packages = with pkgs; [
-    maple-mono.NL-OTF
-  ];
-  # ---------------------- #
 }
