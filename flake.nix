@@ -30,14 +30,11 @@
 
         # 2. Local Modules
         ./system/hardware-configuration.nix
-        ./system/bootloader.nix
+        ./system/bootloader_and_kernel.nix
         ./system/configuration.nix
         ./system/desktop_environment.nix
         ./system/flatpak.nix
-        ./system/luks.nix
-        ./system/networking.nix
-        ./system/programs.nix
-        ./system/users.nix
+        ./system/programs_and_services.nix
       ];
     };
   };
