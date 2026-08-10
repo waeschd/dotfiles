@@ -38,6 +38,7 @@
   # ----- Programs ------- #
   environment.systemPackages = with pkgs; [
     neovim
+    efibootmgr
     git
     curl
     papirus-icon-theme

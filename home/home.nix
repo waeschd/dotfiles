@@ -18,6 +18,7 @@
   home.packages = with pkgs; [
     maple-mono.NL-NF
     onefetch
+    kitty
     bat
     diffnav
     eza
