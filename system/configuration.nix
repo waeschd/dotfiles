@@ -23,12 +23,6 @@
   };
   # ---------------------- #
 
-  # ----- Fonts ------- #
-  fonts.packages = with pkgs; [
-    maple-mono.NL-OTF
-  ];
-  # ---------------------- #
-
   time.timeZone                = "Europe/Berlin";
   hardware.enableAllFirmware   = true;
   nixpkgs.config.allowUnfree   = true;
