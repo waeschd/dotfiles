@@ -2,13 +2,19 @@
 
 {
   # ----- Services ------- #
-  # OpenSSH daemon.
+  # OpenSSH daemon
   services.openssh.enable = false;
 
-  # Enable CUPS to print documents.
+  # Bluetooh
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+  };
+
+  # Enable CUPS to print documents
   services.printing.enable = true;
 
-  # Enable sound.
+  # Enable sound
   services.pipewire = {
     enable = true;
     pulse.enable = true;

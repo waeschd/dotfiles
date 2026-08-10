@@ -28,7 +28,7 @@
 
       grub = {
         enable = true;
-        theme = inputs.nixos-grub-themes.packages.${pkgs.system}.nixos;
+        theme = inputs.nixos-grub-themes.packages.${pkgs.stdenv.hostPlatform.system}.nixos;
         device = "nodev";
         useOSProber = true;
         efiSupport = true;

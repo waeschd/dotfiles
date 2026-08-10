@@ -1,18 +1,49 @@
 { config, pkgs, ... }: 
 
 {
+  imports = [
+    ./modules/neovim.nix
+  ];
+
   home.stateVersion = "26.05";
   home.username = "seru";
   home.homeDirectory = "/home/seru";
 
-  programs.git.enable = true;
+  programs.git = {
+    enable = true;
+
+    settings = {
+      user = {
+        name = "Sebastian Russer";
+        email = "sebastian.russer@fau.de";
+      };
+      aliases = {
+        word-diff = "diff --word-diff=color -b";
+	pr = "pull --rebase";
+      };
+      core = {
+        editor = "nvim";
+	page = "diffnav";
+      };
+      init.defaultBranch = "main";
+      pull.rebase = false;
+      interactive.diffFilter = "diffnav --color-only";
+      diffnav.side-by-side = true;
+      merge.conflictStyle = "zdiff3";
+    };
+  };
+
   programs.bash = {
     enable = true;
   };
 
   home.packages = with pkgs; [
+    onefetch
+    bat
+    eza
+    ghgrab
+    tokei
     tree
-    neovim
     wget
     vivaldi
     vscode
@@ -51,12 +82,3 @@
   ];
 }
 
-# gdb
-# make
-# cmake
-# gcc
-# g++
-# valgrind
-# rustup
-# tokei
-# onefetch
