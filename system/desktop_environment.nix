@@ -4,7 +4,7 @@
   # ----- Packages ------- #
     environment.systemPackages = with pkgs; [
     sddm-astronaut # Use SDDM as Display Manager
-    inputs.caelestia-shell.packages.${pkgs.system}.with-cli # Caelestia Shell
+    inputs.caelestia-shell.packages.${pkgs.stdenv.hostPlatform.system}.with-cli # Caelestia Shell
     inputs.hyprmod.packages.${pkgs.stdenv.hostPlatform.system}.default # HyprMod
   ];
   # ---------------------- #
@@ -41,7 +41,8 @@
 
   xdg.portal = {
     enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    config.common.default = [ "gtk" ];
   };
   # ---------------------- #
 }

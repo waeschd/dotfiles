@@ -5,11 +5,11 @@
     # ----- Plymouth ------ #
     plymouth = {
       enable = true;
-      theme = "glitch"; # Change to `bgrt` for OEM logo (Fedora look)
+      theme = "unrap"; # Change to `bgrt` for OEM logo (Fedora look)
       themePackages = with pkgs; [
         # By default we would install all themes
         (adi1090x-plymouth-themes.override {
-          selected_themes = [ "loader" "darth_vader" "glitch" "green_loader" "spinner_alt" ];
+          selected_themes = [ "loader" "darth_vader" "glitch" "green_loader" "spinner_alt" "unrap" ];
         })
       ];
     };

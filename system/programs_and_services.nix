@@ -41,8 +41,14 @@
     '';
     serviceConfig.Type = "oneshot";
   };
-  # ---------------------- #
 
+  # Fingerprint Reader
+  services.fprintd.enable = true;
+  security.pam.services.sudo.fprintAuth = true; # Use fingerprint for sudo
+  security.pam.services.login.fprintAuth = false;
+  security.pam.services.sddm.fprintAuth = false;
+  security.pam.services.kde.fprintAuth = false;
+  # ---------------------- #
 
 
 
@@ -50,6 +56,7 @@
   environment.systemPackages = with pkgs; [
     neovim
     efibootmgr
+    usbutils
     git
     curl
     papirus-icon-theme
