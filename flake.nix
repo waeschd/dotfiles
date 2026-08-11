@@ -3,12 +3,20 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-26.05";
+
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.6.0";
+
     nixos-grub-themes.url = "github:jeslie0/nixos-grub-themes";
+
+    caelestia-shell = {
+      url = "github:caelestia-dots/shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, ... } @ inputs : {

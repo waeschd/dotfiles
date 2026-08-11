@@ -1,11 +1,14 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 {
-  # ----- Display Manger ------- #
-  # Use SDDM as Display Manager
-  environment.systemPackages = with pkgs; [
-    sddm-astronaut
+  # ----- Packages ------- #
+    environment.systemPackages = with pkgs; [
+    sddm-astronaut # Use SDDM as Display Manager
+    inputs.caelestia-shell.packages.${pkgs.system}.with-cli # Caelestia Shell
   ];
+  # ---------------------- #
+
+  # ----- Display Manger ------- #
   services.displayManager.sddm = {
     enable = true;
     wayland.enable = true;
@@ -16,11 +19,6 @@
   # ---------------------- #
 
   # ----- Desktop Environment ------- #
-  programs.hyprland = {
-    enable = false;
-    xwayland.enable = true;
-  };
-
   # Plasma6 DE
   services.desktopManager.plasma6.enable = true;
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
@@ -33,5 +31,16 @@
     okular
     plasma-systemmonitor
   ];
+
+  # Hyprland
+  programs.hyprland = {
+    enable = true;
+    xwayland.enable = true;  # lets X11-only apps still run under Hyprland
+  };
+
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
+  };
   # ---------------------- #
 }
