@@ -47,6 +47,9 @@
   # My Traceroute, combines the functionality of the 'ping' and 'traceroute' into a single interface.
   programs.mtr.enable = true;
 
+  # NixOS Wiki recommends also enabling `fish` here
+  programs.fish.enable = true;
+
   # GnuPG, tool for encrypting and signing data.
   programs.gnupg.agent = {
     enable = true;

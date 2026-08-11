@@ -5,6 +5,7 @@
     ./modules/neovim.nix
     ./modules/git.nix
     ./modules/fastfetch.nix
+    ./modules/shell.nix
   ];
 
   home.stateVersion = "26.05";
@@ -13,6 +14,14 @@
 
   programs.bash = {
     enable = true;
+  };
+
+  programs.kitty = {
+    enable = true;
+    shellIntegration.enableFishIntegration = true;
+    settings = {
+      shell = "fish";
+    };
   };
 
   home.packages = with pkgs; [
