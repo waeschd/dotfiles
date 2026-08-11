@@ -28,6 +28,7 @@
     maple-mono.NL-NF
     onefetch
     kitty
+    wl-clipboard-x11
     bat
     diffnav
     eza

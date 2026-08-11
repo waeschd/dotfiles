@@ -360,4 +360,12 @@
   home.sessionPath = [
     "$HOME/Nextcloud/01.Universitaet/02.Master_Informatik/04.Semester/01.Masterprojekt/fauccc"
   ];
+
+  # ------------------------ Terminal MUX ------------------------- #
+  programs.zellij = {
+    enable = true;
+    # enableFishIntegration = false; # auto-start a Zellij session when you open a new shell
+    # exitShellOnExit = true;   # closes the terminal when you exit zellij
+    # attachExistingSession = true;  # attach to existing session instead of creating new one
+  };
 }
