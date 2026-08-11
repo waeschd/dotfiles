@@ -5,6 +5,7 @@
     environment.systemPackages = with pkgs; [
     sddm-astronaut # Use SDDM as Display Manager
     inputs.caelestia-shell.packages.${pkgs.system}.with-cli # Caelestia Shell
+    inputs.hyprmod.packages.${pkgs.stdenv.hostPlatform.system}.default # HyprMod
   ];
   # ---------------------- #
 
