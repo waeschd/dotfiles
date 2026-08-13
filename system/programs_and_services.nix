@@ -48,6 +48,14 @@
   security.pam.services.login.fprintAuth = false;
   security.pam.services.sddm.fprintAuth = false;
   security.pam.services.kde.fprintAuth = false;
+
+  # ssh agent
+  programs.ssh = {
+    startAgent = true;
+    extraConfig = ''
+      AddKeysToAgent yes
+    '';
+  };
   # ---------------------- #
 
 
@@ -71,7 +79,7 @@
   # GnuPG, tool for encrypting and signing data.
   programs.gnupg.agent = {
     enable = true;
-    enableSSHSupport = true;
+    enableSSHSupport = false;
   };
   # ---------------------- #
 }
