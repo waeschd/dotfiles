@@ -28,7 +28,6 @@
       scrollback_lines = "2000";
       wheel_scroll_min_lines = "1";
       enable_audio_bell = "no";
-      hide_window_decorations = "yes";
       background_opacity = "0.7";
       dynamic_background_opacity = "yes";
 

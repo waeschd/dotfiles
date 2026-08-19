@@ -28,7 +28,18 @@ let
   ];
 in
 {
-  home.packages = lib.attrValues replacements;
+  home.packages = lib.attrValues replacements ++ [
+    # Adds an "Open Terminal Here" entry to Nautilus's context menu.
+    pkgs.nautilus-python
+    pkgs.nautilus-open-any-terminal
+  ];
+
+  # Outside GNOME, Nautilus doesn't know where to find the nautilus-python
+  # bridge (libnautilus-python.so) that lets it load .py extensions like
+  # the one above, so point it there explicitly.
+  home.sessionVariables.NAUTILUS_4_EXTENSION_DIR = "${pkgs.nautilus-python}/lib/nautilus/extensions-4";
+
+  dconf.settings."com/github/stunkymonkey/nautilus-open-any-terminal".terminal = "kitty";
 
   home.file = lib.listToAttrs (
     map (id: {
