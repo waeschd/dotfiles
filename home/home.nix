@@ -61,9 +61,6 @@
     obs-studio
     nextcloud-client
     onlyoffice-desktopeditors
-
-    inputs.caelestia-shell.packages.${pkgs.stdenv.hostPlatform.system}.with-cli # Caelestia Shell
-    inputs.hyprmod.packages.${pkgs.stdenv.hostPlatform.system}.default # HyprMod
   ];
 }
 
