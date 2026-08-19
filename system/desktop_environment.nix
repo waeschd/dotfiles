@@ -1,8 +1,13 @@
 { config, lib, pkgs, ... }:
 
+let
+  sddm-astronaut = pkgs.sddm-astronaut.override {
+    embeddedTheme = "black_hole";
+  };
+in
 {
   # ----- Packages ------- #
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages = [
     sddm-astronaut # Use SDDM as Display Manager
   ];
   # ---------------------- #
@@ -12,7 +17,9 @@
     enable = true;
     wayland.enable = true;
     theme = "sddm-astronaut-theme";
-    extraPackages = [ pkgs.sddm-astronaut ];
+    extraPackages = with pkgs; [
+      kdePackages.qtmultimedia # Required for video backgrounds/audio
+    ];
   };
 
   # ---------------------- #

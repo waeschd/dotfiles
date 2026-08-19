@@ -1,4 +1,9 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
+
+let
+  dotfiles = "${config.home.homeDirectory}/nixos/nixos-dotfiles";
+  create_symlink = path: config.lib.file.mkOutOfStoreSymlink path;
+in
 
 {
   # ------------------------ Shell ------------------------- #
@@ -375,5 +380,9 @@
     # enableFishIntegration = false; # auto-start a Zellij session when you open a new shell
     # exitShellOnExit = true;   # closes the terminal when you exit zellij
     # attachExistingSession = true;  # attach to existing session instead of creating new one
+  };
+  xdg.configFile.zellij = {
+    source = create_symlink "${dotfiles}/zellij";
+    recursive = true;
   };
 }

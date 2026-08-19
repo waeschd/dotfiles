@@ -9,6 +9,7 @@
     ./modules/terminal.nix
     ./modules/theme.nix
     ./modules/hide-plasma-apps.nix
+    ./modules/hyprland.nix
   ];
 
   home.stateVersion = "26.05";
@@ -27,6 +28,7 @@
     wl-clipboard-x11
     bat
     diffnav
+    wl-clipboard
     eza
     ghgrab
     tokei

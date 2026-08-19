@@ -11,6 +11,8 @@
       size = 12;
     };
 
+    themeFile = "OneDark-Pro";
+
     settings = {
       shell = "fish";
 
@@ -28,7 +30,7 @@
       scrollback_lines = "2000";
       wheel_scroll_min_lines = "1";
       enable_audio_bell = "no";
-      background_opacity = "0.7";
+      background_opacity = "1";
       dynamic_background_opacity = "yes";
 
       selection_foreground = "none";
