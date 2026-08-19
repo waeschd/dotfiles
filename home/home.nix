@@ -6,28 +6,22 @@
     ./modules/git.nix
     ./modules/fastfetch.nix
     ./modules/shell.nix
+    ./modules/terminal.nix
   ];
 
   home.stateVersion = "26.05";
   home.username = "seru";
   home.homeDirectory = "/home/seru";
 
-  programs.bash = {
-    enable = true;
-  };
-
-  programs.kitty = {
-    enable = true;
-    shellIntegration.enableFishIntegration = true;
-    settings = {
-      shell = "fish";
-    };
-  };
+  programs.vscode.enable = true;
 
   home.packages = with pkgs; [
     maple-mono.NL-NF
     onefetch
-    kitty
+    btop
+    docker-compose
+    gdb
+    ncdu
     wl-clipboard-x11
     bat
     diffnav
@@ -37,7 +31,6 @@
     tree
     wget
     vivaldi
-    vscode
     gimp
     distrobox
     gnome-boxes

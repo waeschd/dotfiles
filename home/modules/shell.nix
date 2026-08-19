@@ -173,17 +173,25 @@
       '';
     };
   };
+
+
+  programs.bash = {
+    enable = true;
+  };
+
   #< ------------------------ Shell ------------------------- #
 
   # ------------------------ Prompt / History ------------------------------ #
   programs.atuin = {
     enable = true;
     enableFishIntegration = true;
+    enableBashIntegration = false;
   };
 
   programs.starship = {
     enable = true;
     enableFishIntegration = true;
+    enableBashIntegration = false;
 
     settings = {
       format = " [](fg:c1)$container$directory[](fg:c1) [](fg:#303030)$git_branch$git_status$git_state$git_metrics$nodejs$dotnet$python$java$c$rust$cmd_duration$time[](fg:c4)$fill[](fg:#ffffff)$os[](fg:#ffffff bg:c1)$username$hostname[ ](fg:c1)$line_break$character";  
