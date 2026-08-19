@@ -62,13 +62,12 @@
 
   # ----- Programs ------- #
   environment.systemPackages = with pkgs; [
-    neovim
     efibootmgr
     usbutils
-    git
     curl
-    papirus-icon-theme
   ];
+  
+  programs.nix-ld.enable = true; # Used for claude code support in VSCode
 
   # My Traceroute, combines the functionality of the 'ping' and 'traceroute' into a single interface.
   programs.mtr.enable = true;

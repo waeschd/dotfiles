@@ -1,12 +1,6 @@
 { config, lib, pkgs, ... }:
 
 {
-  xdg.portal = {
-    enable = true;
-    config = { common = { default = [ "gtk" ]; }; };
-    extraPortals = with pkgs; [ xdg-desktop-portal-gtk ];
-  };
-
   services.flatpak = {
     enable = true;
     update.auto = { enable = true; onCalendar = "weekly"; };

@@ -1,0 +1,42 @@
+{ lib, pkgs, ... }:
+
+# KDE apps I don't use - hidden from this user's application menu in favor
+# of the GTK/GNOME equivalent installed alongside each one, without
+# uninstalling the KDE app itself. Other users on the machine still see it
+# normally.
+#
+# XDG desktop-entry lookup checks ~/.local/share/applications before the
+# system directories, so dropping a stub override with `NoDisplay=true`
+# there is enough to hide the app from menus/launchers for this user only;
+# the real .desktop file and package are untouched.
+let
+  replacements = {
+    "org.kde.ark" = pkgs.file-roller;
+    "org.kde.dolphin" = pkgs.nautilus;
+    "org.kde.gwenview" = pkgs.eog;
+    "org.kde.kate" = pkgs.gnome-text-editor;
+    "org.kde.konsole" = pkgs.ptyxis;
+    "org.kde.okular" = pkgs.papers;
+    "org.kde.plasma-systemmonitor" = pkgs.mission-center;
+    "org.kde.spectacle" = pkgs.gnome-screenshot;
+  };
+
+  # KDE apps hidden with no direct GTK/GNOME equivalent installed.
+  noReplacement = [
+    "org.kde.elisa"
+    "org.kde.khelpcenter"
+  ];
+in
+{
+  home.packages = lib.attrValues replacements;
+
+  home.file = lib.listToAttrs (
+    map (id: {
+      name = ".local/share/applications/${id}.desktop";
+      value.text = ''
+        [Desktop Entry]
+        NoDisplay=true
+      '';
+    }) (lib.attrNames replacements ++ noReplacement)
+  );
+}

@@ -1,11 +1,9 @@
-{ config, lib, pkgs, inputs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   # ----- Packages ------- #
-    environment.systemPackages = with pkgs; [
+  environment.systemPackages = with pkgs; [
     sddm-astronaut # Use SDDM as Display Manager
-    inputs.caelestia-shell.packages.${pkgs.stdenv.hostPlatform.system}.with-cli # Caelestia Shell
-    inputs.hyprmod.packages.${pkgs.stdenv.hostPlatform.system}.default # HyprMod
   ];
   # ---------------------- #
 
@@ -22,16 +20,6 @@
   # ----- Desktop Environment ------- #
   # Plasma6 DE
   services.desktopManager.plasma6.enable = true;
-  environment.plasma6.excludePackages = with pkgs.kdePackages; [
-    plasma-browser-integration
-    dolphin
-    gwenview
-    elisa
-    kate
-    konsole
-    okular
-    plasma-systemmonitor
-  ];
 
   # Hyprland
   programs.hyprland = {

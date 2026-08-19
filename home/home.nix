@@ -1,4 +1,4 @@
-{ config, pkgs, ... }: 
+{ config, pkgs, inputs, ... }:
 
 {
   imports = [
@@ -7,6 +7,8 @@
     ./modules/fastfetch.nix
     ./modules/shell.nix
     ./modules/terminal.nix
+    ./modules/theme.nix
+    ./modules/hide-plasma-apps.nix
   ];
 
   home.stateVersion = "26.05";
@@ -34,17 +36,11 @@
     gimp
     distrobox
     gnome-boxes
-    papers
-    eog
     ffmpeg
     baobab
     gnome-calculator
     gnome-disk-utility
-    gnome-text-editor
     fish
-    ptyxis
-    nautilus
-    mission-center
     foliate
     czkawka
     gnome-frog
@@ -63,6 +59,9 @@
     obs-studio
     nextcloud-client
     onlyoffice-desktopeditors
+
+    inputs.caelestia-shell.packages.${pkgs.stdenv.hostPlatform.system}.with-cli # Caelestia Shell
+    inputs.hyprmod.packages.${pkgs.stdenv.hostPlatform.system}.default # HyprMod
   ];
 }
 
