@@ -40,4 +40,14 @@ in
     config.common.default = [ "gtk" ];
   };
   # ---------------------- #
+
+  # ----- Secret Service (keyring) ------- #
+  # Plasma auto-starts + unlocks KWallet via PAM, but Hyprland has no DE to do that,
+  # so apps like Vivaldi/Chromium fail to unlock their secure key store there.
+  # gnome-keyring provides the same org.freedesktop.secrets API and gets unlocked
+  # via PAM at SDDM login, same as KWallet does for Plasma.
+  services.gnome.gnome-keyring.enable = true;
+  services.gnome.gcr-ssh-agent.enable = false; # conflicts with programs.ssh.startAgent
+  security.pam.services.sddm.enableGnomeKeyring = true;
+  # ---------------------- #
 }

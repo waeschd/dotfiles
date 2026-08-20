@@ -48,6 +48,8 @@ in
       name = ".local/share/applications/${id}.desktop";
       value.text = ''
         [Desktop Entry]
+        Type=Application
+        Name=${id}
         NoDisplay=true
       '';
     }) (lib.attrNames replacements ++ noReplacement)
