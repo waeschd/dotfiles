@@ -17,7 +17,6 @@ let
     "org.kde.kate" = pkgs.gnome-text-editor;
     "org.kde.konsole" = pkgs.ptyxis;
     "org.kde.okular" = pkgs.papers;
-    "org.kde.plasma-systemmonitor" = pkgs.mission-center;
     "org.kde.spectacle" = pkgs.gnome-screenshot;
   };
 
@@ -32,6 +31,9 @@ in
     # Adds an "Open Terminal Here" entry to Nautilus's context menu.
     pkgs.nautilus-python
     pkgs.nautilus-open-any-terminal
+
+    # Kept alongside org.kde.plasma-systemmonitor rather than replacing it.
+    pkgs.mission-center
   ];
 
   # Outside GNOME, Nautilus doesn't know where to find the nautilus-python

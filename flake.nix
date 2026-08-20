@@ -18,6 +18,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    caelestia-cli = {
+      url = "github:caelestia-dots/cli";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     hyprmod = {
       url = "github:BlueManCZ/hyprmod";
       inputs.nixpkgs.follows = "nixpkgs";
