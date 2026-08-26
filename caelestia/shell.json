@@ -1,0 +1,137 @@
+{
+    "appearance": {
+        "transparency": {
+            "enabled": true
+        }
+    },
+    "background": {
+        "wallpaperEnabled": true
+    },
+    "bar": {
+        "activeWindow": {
+            "compact": true,
+            "inverted": true
+        },
+        "clock": {
+            "background": true,
+            "showDate": true
+        },
+        "persistent": true,
+        "statusIcons": [
+            {
+                "enabled": true,
+                "id": "lockStatus"
+            },
+            {
+                "enabled": true,
+                "id": "audio"
+            },
+            {
+                "enabled": true,
+                "id": "microphone"
+            },
+            {
+                "enabled": false,
+                "id": "kbLayout"
+            },
+            {
+                "enabled": true,
+                "id": "network"
+            },
+            {
+                "enabled": true,
+                "id": "bluetooth"
+            },
+            {
+                "enabled": true,
+                "id": "battery"
+            }
+        ],
+        "tray": {
+            "background": true,
+            "compact": false,
+            "recolour": true
+        },
+        "workspaces": {
+            "activeTrail": false,
+            "maxWindowIcons": 5,
+            "occupiedBg": false,
+            "perMonitorWorkspaces": true,
+            "showWindows": true
+        }
+    },
+    "dashboard": {
+        "dragThreshold": 40
+    },
+    "general": {
+        "apps": {
+            "explorer": [
+                "nautilus",
+                "--new-window"
+            ],
+            "terminal": [
+                "kitty"
+            ]
+        }
+    },
+    "launcher": {
+        "favouriteApps": [
+        ],
+        "hiddenApps": [
+            "systemsettings",
+            "org.kde.kwrite",
+            "org.kde.kwalletmanager",
+            "kdesystemsettings"
+        ],
+        "showOnHover": false,
+        "useFuzzy": {
+            "wallpapers": false
+        }
+    },
+    "notifs": {
+        "defaultExpireTimeout": 15000,
+        "openExpanded": true
+    },
+    "services": {
+        "useFahrenheit": false,
+        "useTwelveHourClock": false,
+        "visualiserBars": 60
+    },
+    "sidebar": {
+        "dragThreshold": 80,
+        "enabled": true,
+        "showOnHover": true
+    },
+    "utilities": {
+        "quickToggles": [
+            {
+                "enabled": true,
+                "id": "wifi"
+            },
+            {
+                "enabled": true,
+                "id": "bluetooth"
+            },
+            {
+                "enabled": true,
+                "id": "mic"
+            },
+            {
+                "enabled": true,
+                "id": "settings"
+            },
+            {
+                "enabled": true,
+                "id": "gameMode"
+            },
+            {
+                "enabled": true,
+                "id": "dnd"
+            },
+            {
+                "enabled": true,
+                "id": "vpn"
+            }
+        ]
+    }
+}

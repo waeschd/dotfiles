@@ -77,8 +77,8 @@ hl.config({
         border_size = 3,
 
         col = {
-            active_border   = { colors = {"rgba(33ccffee)"}, angle = 90 },
-            inactive_border = "rgba(595959aa)",
+            active_border   = "rgba(ff8800ee)",
+            inactive_border = "rgba(ffffffaa)",
         },
 
         -- Set to true to enable resizing windows by clicking and dragging on borders and gaps
@@ -127,10 +127,12 @@ hl.curve("quick",          { type = "bezier", points = { {0.15, 0},    {0.1, 1} 
 
 -- Default springs
 hl.curve("easy",           { type = "spring", mass = 1, stiffness = 71.2633, dampening = 15.8273644 })
+-- Slower spring for window move/resize only (same damping ratio as "easy", ~1.9x settle time)
+hl.curve("windowsMove",    { type = "spring", mass = 1, stiffness = 18,      dampening = 8.39 })
 
 hl.animation({ leaf = "global",        enabled = true,  speed = 10,   bezier = "default" })
 hl.animation({ leaf = "border",        enabled = true,  speed = 5.39, bezier = "easeOutQuint" })
-hl.animation({ leaf = "windows",       enabled = true,  speed = 4.79, spring = "easy" })
+hl.animation({ leaf = "windows",       enabled = true,  speed = 4.79, spring = "windowsMove" })
 hl.animation({ leaf = "windowsIn",     enabled = true,  speed = 4.1,  spring = "easy",         style = "popin 87%" })
 hl.animation({ leaf = "windowsOut",    enabled = true,  speed = 1.49, bezier = "linear",       style = "popin 87%" })
 hl.animation({ leaf = "fadeIn",        enabled = true,  speed = 1.73, bezier = "almostLinear" })
@@ -210,7 +212,7 @@ hl.config({
         kb_options = "compose:ralt", -- Right Alt = Compose key (e.g. Compose + " + o = ö)
         kb_rules   = "",
 
-        follow_mouse = 3,
+        follow_mouse = 2,
 
         sensitivity = 0, -- -1.0 - 1.0, 0 means no modification.
 
@@ -245,17 +247,16 @@ hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))
 local closeWindowBind = hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 -- closeWindowBind:set_enabled(false)
 hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
-hl.bind(mainMod .. " + E", hl.dsp.layout("fit expand"))     -- expand column into free space
+hl.bind("ALT + F4", hl.dsp.exec_cmd("caelestia shell lock lock")) -- lock screen
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
-hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(fileManager))   -- open file manager
-hl.bind("F11", hl.dsp.window.fullscreen(0))                -- fullscreen
+hl.bind("ALT + F11", hl.dsp.window.fullscreen(0))          -- fullscreen (alt)
 
 -- Resize the focused window's column (scrolling layout)
 hl.bind(mainMod .. " + SHIFT + equal", hl.dsp.layout("colresize +0.1")) 
 hl.bind(mainMod .. " + SHIFT + minus", hl.dsp.layout("colresize -0.1"))
--- hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
+hl.bind(mainMod .. " + E", hl.dsp.layout("colresize 1.0"))
 
 -- Move focus with mainMod + vim-style hjkl
 hl.bind(mainMod .. " + h", hl.dsp.focus({ direction = "left" }))
@@ -268,6 +269,10 @@ hl.bind(mainMod .. " + SHIFT + h", hl.dsp.window.move({ direction = "left" }))
 hl.bind(mainMod .. " + SHIFT + l", hl.dsp.window.move({ direction = "right" }))
 hl.bind(mainMod .. " + SHIFT + k", hl.dsp.window.move({ direction = "up" }))
 hl.bind(mainMod .. " + SHIFT + j", hl.dsp.window.move({ direction = "down" }))
+
+-- Swap columns with mainMod + CTRL + h/l (scrolling layout only)
+hl.bind(mainMod .. " + CTRL + h", hl.dsp.layout("swapcol l"))
+hl.bind(mainMod .. " + CTRL + l", hl.dsp.layout("swapcol r"))
 
 -- Switch workspaces with mainMod + [0-9]
 -- Move active window to a workspace with mainMod + SHIFT + [0-9]
@@ -302,6 +307,10 @@ hl.bind("XF86AudioNext",  hl.dsp.exec_cmd("playerctl next"),       { locked = tr
 hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPlay",  hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = true })
+
+-- Screenshot key (region select -> clipboard + swappy annotate on click; SHIFT for fullscreen)
+hl.bind("Print",          hl.dsp.exec_cmd("caelestia screenshot -r"))
+hl.bind("SHIFT + Print",  hl.dsp.exec_cmd("caelestia screenshot"))
 
 
 --------------------------------
