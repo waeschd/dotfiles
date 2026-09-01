@@ -5,7 +5,7 @@
         }
     },
     "background": {
-        "wallpaperEnabled": true
+        "wallpaperEnabled": false
     },
     "bar": {
         "activeWindow": {
@@ -68,6 +68,9 @@
             "explorer": [
                 "nautilus",
                 "--new-window"
+            ],
+            "playback": [
+                "celluloid"
             ],
             "terminal": [
                 "kitty"

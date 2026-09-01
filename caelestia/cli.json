@@ -1,5 +1,8 @@
 {
   "theme": {
     "enableTerm": false
+  },
+  "wallpaper": {
+    "postHook": "awww img \"$WALLPAPER_PATH\" --transition-type wipe --transition-angle 45 --transition-duration 3 --transition-fps 60"
   }
 }

@@ -32,6 +32,7 @@ local menu        = "caelestia shell drawers toggle launcher"
 --
 hl.on("hyprland.start", function ()
     hl.exec_cmd("caelestia shell -d") -- Caelestia Shell (bar, launcher, notifications, etc.)
+    hl.exec_cmd("awww-daemon") -- AWWW (animated wallpaper daemon)
 end)
 
 
@@ -95,8 +96,8 @@ hl.config({
         rounding_power = 2,
 
         -- Change transparency of focused and unfocused windows
-        active_opacity   = 0.95,
-        inactive_opacity = 1,
+        active_opacity   = 0.75,
+        inactive_opacity = 0.75,
 
         shadow = {
             enabled      = true,
@@ -252,7 +253,6 @@ hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(fileManager))   -- open file manager
 hl.bind("ALT + F11", hl.dsp.window.fullscreen(0))          -- fullscreen (alt)
-
 -- Resize the focused window's column (scrolling layout)
 hl.bind(mainMod .. " + SHIFT + equal", hl.dsp.layout("colresize +0.1")) 
 hl.bind(mainMod .. " + SHIFT + minus", hl.dsp.layout("colresize -0.1"))
@@ -321,6 +321,17 @@ hl.bind("SHIFT + Print",  hl.dsp.exec_cmd("caelestia screenshot"))
 -- and https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
 
 -- Example window rules that are useful
+
+-- Exempt Vivaldi from the global opacity (fully opaque)
+-- opacity 1.0 1.0 only overrides Hyprland's multiplier; Chromium apps also
+-- paint their own surface with an alpha channel under Wayland, so `opaque`
+-- is needed too to force the compositor to ignore that.
+hl.window_rule({
+    name  = "no-opacity-vivaldi",
+    match = { class = "(?i)vivaldi-stable" },
+    opacity = "1.0 1.0",
+    opaque  = true,
+})
 
 local suppressMaximizeRule = hl.window_rule({
     -- Ignore maximize requests from all apps. You'll probably like this.
