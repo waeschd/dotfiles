@@ -126,6 +126,31 @@ in
         '';
       };
 
+      convert_mp4_to_webp = {
+        description = "Convert <input.mp4> to <input>.webp (animated). Optional [fps] (default 15) and [quality] (default 75, higher = better quality).";
+        body = ''
+          if test (count $argv) -lt 1
+              echo "Usage: convert_mp4_to_webp <input.mp4> [fps] [quality]"
+              return 1
+          end
+
+          set input $argv[1]
+          set output (string replace -r '\.[^.]*$' ".webp" $input)
+
+          set fps 15
+          if test (count $argv) -ge 2
+              set fps $argv[2]
+          end
+
+          set quality 75
+          if test (count $argv) -ge 3
+              set quality $argv[3]
+          end
+
+          ffmpeg -i "$input" -vf "fps=$fps" -c:v libwebp -lossless 0 -q:v $quality -loop 0 -y "$output"
+        '';
+      };
+
       reduce_pdf_size = {
         description = "Reduce size of <input.pdf>; written to reduced.pdf";
         body = ''

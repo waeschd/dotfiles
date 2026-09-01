@@ -69,6 +69,11 @@
   
   # GTK apps (nautilus, etc.) read their settings via dconf.
   programs.dconf.enable = true;
+
+  # Provides gvfsd/gvfsd-trash etc. Without this, Nautilus can't handle
+  # trash:// or network locations (smb://, sftp://, ...) and errors with
+  # "Trash locations are not supported".
+  services.gvfs.enable = true;
   
   programs.nix-ld.enable = true; # Used for claude code support in VSCode
 

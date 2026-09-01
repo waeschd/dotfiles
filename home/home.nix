@@ -56,11 +56,15 @@
     localsend
     thunderbird
     signal-desktop
+    vesktop
     zotero
     zoom-us
     obs-studio
+    obsidian
     nextcloud-client
     onlyoffice-desktopeditors
+    mpv
+    celluloid
   ];
 }
 

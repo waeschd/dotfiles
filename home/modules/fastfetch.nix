@@ -7,7 +7,9 @@
     settings = {
       logo = {
         type = "auto";
-	source = "NixOS";
+	      source = "NixOS";
+        # type = "kitty";
+        # source = "/home/seru/Pictures/Terminal/logo.jpeg";
       };
 
       display = {
