@@ -28,23 +28,16 @@ in
   # Plasma6 DE
   services.desktopManager.plasma6.enable = true;
 
-  # Hyprland
-  programs.hyprland = {
-    enable = true;
-    xwayland.enable = true;  # lets X11-only apps still run under Hyprland
-  };
-
-  xdg.portal = {
-    enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-    config.common.default = [ "gtk" ];
-  };
+  # Plasma6 already wires up xdg-desktop-portal-kde + a gtk fallback for GTK
+  # apps (Vivaldi, GIMP, ...); just make kde the preferred backend so native
+  # dialogs/screenshare/etc. go through KWin.
+  xdg.portal.config.common.default = [ "kde" "gtk" ];
   # ---------------------- #
 
   # ----- Fonts ------- #
   # System-wide default fonts: whatever an app resolves via fontconfig's
-  # generic "sans-serif" / "monospace" families (GTK, Qt, Quickshell/Caelestia,
-  # Electron, browsers, ...) falls back to these. Apps that set an explicit
+  # generic "sans-serif" / "monospace" families (GTK, Qt, Electron, browsers,
+  # ...) falls back to these. Apps that set an explicit
   # font (e.g. kitty) are unaffected.
   fonts = {
     packages = with pkgs; [
@@ -62,12 +55,9 @@ in
   # ---------------------- #
 
   # ----- Secret Service (keyring) ------- #
-  # Plasma auto-starts + unlocks KWallet via PAM, but Hyprland has no DE to do that,
-  # so apps like Vivaldi/Chromium fail to unlock their secure key store there.
-  # gnome-keyring provides the same org.freedesktop.secrets API and gets unlocked
-  # via PAM at SDDM login, same as KWallet does for Plasma.
-  services.gnome.gnome-keyring.enable = true;
-  services.gnome.gcr-ssh-agent.enable = false; # conflicts with programs.ssh.startAgent
-  security.pam.services.sddm.enableGnomeKeyring = true;
+  # Plasma auto-starts KWallet, but it still needs to be unlocked with the
+  # login password at session start - the SDDM PAM hook below does that,
+  # the same way GDM does it for GNOME's keyring.
+  security.pam.services.sddm.enableKwallet = true;
   # ---------------------- #
 }

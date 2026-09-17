@@ -29,6 +29,23 @@
       dockerSocket.enable = true; # External tools like VS Code "Dev Containers," Portainer, or specific Python/Go scripts may look for `/var/run/docker.sock`
       defaultNetwork.settings.dns_enabled = true; # Required for containers under podman-compose to be able to talk to each other.
     };
+
+    oci-containers = {
+      backend = "podman";
+      containers.timetagger = {
+        image = "ghcr.io/almarklein/timetagger:v26.1.3";
+        autoStart = true;
+        ports = [ "127.0.0.1:8080:80" ];
+        volumes = [ "/var/lib/timetagger:/root/_timetagger" ];
+        environment = {
+          TIMETAGGER_BIND = "0.0.0.0:80";
+          TIMETAGGER_DATADIR = "/root/_timetagger";
+          # bcrypt hash of the login password, generated at https://timetagger.app/cred 
+          # Use plain version!
+          TIMETAGGER_CREDENTIALS = "russer:$2a$08$1/FsT2g092V2Neh273hqXuIdtE62PyUOhsLt1eMssoWDfwMb.EUl.";
+        };
+      };
+    };
   };
 
   # Battery Threshold

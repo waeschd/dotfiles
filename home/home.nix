@@ -2,14 +2,12 @@
 
 {
   imports = [
-    ./modules/neovim.nix
     ./modules/git.nix
     ./modules/fastfetch.nix
     ./modules/shell.nix
     ./modules/terminal.nix
     ./modules/theme.nix
-    ./modules/hide-plasma-apps.nix
-    ./modules/hyprland.nix
+    ./modules/neovim/neovim.nix
   ];
 
   home.stateVersion = "26.05";
@@ -65,6 +63,7 @@
     onlyoffice-desktopeditors
     mpv
     celluloid
+    poppler-utils
   ];
 }
 
