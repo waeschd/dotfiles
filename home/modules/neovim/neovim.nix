@@ -8,12 +8,21 @@
 
     # Tools nvim itself needs on PATH: LSP servers, formatters, linters.
     extraPackages = with pkgs; [
+      # vim.lsp's file watcher (workspace/didChangeWatchedFiles) uses real
+      # inotify watches via `inotifywait` when it's on PATH, falling back to
+      # a much slower manual directory-polling backend otherwise.
+      inotify-tools
+
       # ---- C/C++ ---- (clangd LSP + clang-format formatter + cpplint linter)
       clang-tools
       cpplint
 
-      # ---- Rust ---- (rust_analyzer LSP)
+      # ---- Rust ---- (rust_analyzer LSP; rustc/cargo are also needed by
+      # rust_analyzer itself, e.g. to resolve its sysroot -- not just for
+      # actually compiling anything)
       rust-analyzer
+      rustc
+      cargo
 
       # ---- Lua ---- (lua_ls LSP + stylua formatter)
       lua-language-server

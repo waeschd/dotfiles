@@ -64,6 +64,7 @@
     mpv
     celluloid
     poppler-utils
+    ripgrep
   ];
 }
 

@@ -78,7 +78,9 @@ vim.keymap.set("n", "<leader>x", function()
 
   local bufnr = vim.api.nvim_get_current_buf()
 
-  -- If buffer is visible in another window, just switch to next buffer
+  -- Don't delete a buffer that's still shown in another window -- that
+  -- would force that other window onto a different buffer too, since
+  -- buffers are global, not per-window.
   if is_buffer_visible_in_other_window(bufnr) then
     vim.notify("Buffer is openend in another window!")
     return
@@ -119,7 +121,7 @@ end, opts)
 opts.desc = "Go to next buffer"
 vim.keymap.set("n", "<Tab>", "<cmd>bn<CR>", opts)
 
-opts.desc = "Go to previous buffe"
+opts.desc = "Go to previous buffer"
 vim.keymap.set("n", "<S-Tab>", "<cmd>bp<CR>", opts)
 
 vim.keymap.set({"i","s"}, "<Tab>", function()
@@ -205,52 +207,64 @@ end, opts)
 opts.desc = "(LSP) Hover code info"
 vim.keymap.set("n", "<leader>lci", function () vim.lsp.buf.hover() end, opts)
 
+-- Custom jump stack for gd/gD + <C-t>, instead of Neovim's built-in
+-- jumplist (<C-o>/<C-i>). Uses vim.lsp.buf.definition/declaration's
+-- `on_list` hook rather than a hand-rolled buf_request: that means Neovim
+-- computes each attached client's position params with its own correct
+-- offset encoding internally, instead of us having to guess one encoding
+-- for every client sharing the buffer (which could be wrong when, e.g.,
+-- harper_ls and clangd are both attached with different encodings).
 local lsp_jump_stack = {}
 
 local function push_current_position()
-  local buf = vim.api.nvim_get_current_buf()
-  local pos = vim.api.nvim_win_get_cursor(0)
-
   table.insert(lsp_jump_stack, {
-    buf = buf,
-    lnum = pos[1],
-    col = pos[2],
+    buf = vim.api.nvim_get_current_buf(),
+    cursor = vim.api.nvim_win_get_cursor(0),
   })
 end
 
-local function get_encoding()
-  local clients = vim.lsp.get_clients({ bufnr = 0 })
-  return (clients[1] and clients[1].offset_encoding) or "utf-16"
+local function jump_to_item(item)
+  if item.bufnr and item.bufnr > 0 then
+    vim.api.nvim_set_current_buf(item.bufnr)
+  else
+    vim.cmd.edit(item.filename)
+  end
+  vim.api.nvim_win_set_cursor(0, { item.lnum, (item.col or 1) - 1 })
 end
 
-local function smart_lsp_jump(jump_fn, method)
-  local params = vim.lsp.util.make_position_params(0, get_encoding())
+local function smart_lsp_jump(request_fn)
+  request_fn({
+    on_list = function(list)
+      if not list.items or #list.items == 0 then
+        return
+      end
 
-  vim.lsp.buf_request(0, method, params, function(err, result, ctx, config)
-    if err or not result or vim.tbl_isempty(result) then
-      return
-    end
+      -- Only push if a real jump will happen
+      push_current_position()
 
-    -- Only push if a real jump will happen
-    push_current_position()
+      if #list.items == 1 then
+        jump_to_item(list.items[1])
+      else
+        -- Multiple candidates: let the user pick, same as Neovim's default
+        -- behavior without on_list.
+        vim.fn.setqflist({}, ' ', { title = list.title, items = list.items })
+        vim.cmd('copen')
+      end
 
-    -- Call the original function to perform the jump
-    -- (it will work now because result exists)
-    jump_fn()
-
-    -- Give the jump time to complete before centering
-    vim.defer_fn(function()
-      vim.cmd('normal! zz')
-    end, 50)
-  end)
+      -- Give the jump time to complete before centering
+      vim.defer_fn(function()
+        vim.cmd('normal! zz')
+      end, 50)
+    end,
+  })
 end
 
 vim.keymap.set("n", "gd", function()
-  smart_lsp_jump(vim.lsp.buf.definition, "textDocument/definition")
+  smart_lsp_jump(vim.lsp.buf.definition)
 end)
 
 vim.keymap.set("n", "gD", function()
-  smart_lsp_jump(vim.lsp.buf.declaration, "textDocument/declaration")
+  smart_lsp_jump(vim.lsp.buf.declaration)
 end)
 
 local function smart_return()
@@ -265,7 +279,7 @@ local function smart_return()
   -- Switch to the target buffer if it's valid
   if vim.api.nvim_buf_is_valid(target.buf) then
     vim.api.nvim_set_current_buf(target.buf)
-    vim.api.nvim_win_set_cursor(0, { target.lnum, target.col })
+    vim.api.nvim_win_set_cursor(0, target.cursor)
   end
 
   -- Only delete the previous buffer if it's not the target
@@ -307,10 +321,16 @@ if vim.lsp.inlay_hint then
 end
 
 -- Diagnostics
-opts.desc = "(Diagnostics) Toggle virtual text"
-vim.keymap.set("n", "<leader>dv", function()
+opts.desc = "(Diagnostics) Toggle virtual lines"
+vim.keymap.set("n", "<leader>dvl", function()
   local current = vim.diagnostic.config().virtual_lines
   vim.diagnostic.config({ virtual_lines = not current })
+end, opts)
+
+opts.desc = "(Diagnostics) Toggle virtual text"
+vim.keymap.set("n", "<leader>dvi", function()
+  local current = vim.diagnostic.config().virtual_text
+  vim.diagnostic.config({ virtual_text = not current })
 end, opts)
 
 
@@ -323,28 +343,3 @@ opts.desc = "Go to file:line under cursor"
 vim.keymap.set("n", "gF", function()
   vim.cmd("vertical wincmd F")
 end, opts)
-
-opts.desc = "Yank with line numbers"
-local function yank_with_line_numbers()
-  vim.cmd('noau normal! "vy')
-  local text = vim.fn.getreg("v")
-  local start_line = vim.fn.line("v")
-
-  local lines = vim.split(text, "\n")
-  local numbered_lines = {}
-
-  for i, line in ipairs(lines) do
-    -- If the last line is empty, skip it
-    if i == #lines and line == "" then
-      break
-    end
-
-    local current_line_num = start_line + i - 1
-    table.insert(numbered_lines, string.format("%d  %s", i, line))
-  end
-
-  local final_text = table.concat(numbered_lines, "\n")
-  vim.fn.setreg("+", final_text)
-  vim.fn.setreg('"', final_text)
-end
-vim.keymap.set("v", "<leader>yc", yank_with_line_numbers, opts)

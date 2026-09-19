@@ -61,10 +61,10 @@ vim.api.nvim_create_autocmd("VimLeave", {
   end,
 })
 
--- Important
+-- How long to sit idle before CursorHold/CursorHoldI fire -- used below by
+-- the LSP document-highlight autocmds to decide how soon hovering over a
+-- symbol highlights its references.
 vim.opt.updatetime = 400
--- Important
---
 vim.api.nvim_create_autocmd("ColorScheme", {
   pattern = "*",
   callback = function()
