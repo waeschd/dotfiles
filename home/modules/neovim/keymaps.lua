@@ -124,6 +124,12 @@ vim.keymap.set("n", "<Tab>", "<cmd>bn<CR>", opts)
 opts.desc = "Go to previous buffer"
 vim.keymap.set("n", "<S-Tab>", "<cmd>bp<CR>", opts)
 
+-- <Tab> is explicitly mapped above, so without an explicit <C-i> mapping too,
+-- Neovim collapses them back into one key and <Tab>'s mapping wins for both
+-- (see :h CTRL-I) -- this keeps <C-i> on its default jumplist-forward action.
+opts.desc = "Jump to newer cursor position"
+vim.keymap.set("n", "<C-i>", "<C-i>", opts)
+
 vim.keymap.set({"i","s"}, "<Tab>", function()
   local col = vim.api.nvim_win_get_cursor(0)[2]
   local line = vim.api.nvim_get_current_line()
@@ -207,13 +213,12 @@ end, opts)
 opts.desc = "(LSP) Hover code info"
 vim.keymap.set("n", "<leader>lci", function () vim.lsp.buf.hover() end, opts)
 
--- Custom jump stack for gd/gD + <C-t>, instead of Neovim's built-in
--- jumplist (<C-o>/<C-i>). Uses vim.lsp.buf.definition/declaration's
--- `on_list` hook rather than a hand-rolled buf_request: that means Neovim
--- computes each attached client's position params with its own correct
--- offset encoding internally, instead of us having to guess one encoding
--- for every client sharing the buffer (which could be wrong when, e.g.,
--- harper_ls and clangd are both attached with different encodings).
+-- Commented out in favor of Neovim's native jumplist (<C-o>/<C-i>), which
+-- Kitty's keyboard protocol lets Neovim tell apart from <Tab> -- gd/gD
+-- themselves are already `jump-motions`, so plain vim.lsp.buf.definition/
+-- declaration jumps get recorded on the jumplist automatically, no custom
+-- stack needed.
+--[[
 local lsp_jump_stack = {}
 
 local function push_current_position()
@@ -259,14 +264,6 @@ local function smart_lsp_jump(request_fn)
   })
 end
 
-vim.keymap.set("n", "gd", function()
-  smart_lsp_jump(vim.lsp.buf.definition)
-end)
-
-vim.keymap.set("n", "gD", function()
-  smart_lsp_jump(vim.lsp.buf.declaration)
-end)
-
 local function smart_return()
   if #lsp_jump_stack == 0 then
     return
@@ -301,10 +298,16 @@ local function smart_return()
   end
 end
 
-opts.desc = "(LSP) Go back and close buffer"
 vim.keymap.set("n", "<C-t>", function()
   smart_return()
 end, opts)
+--]]
+
+opts.desc = "(LSP) Go to definition"
+vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+
+opts.desc = "(LSP) Go to declaration"
+vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
 
 opts.desc = "(LSP) Code action"
 vim.keymap.set("n", "<leader>lca", vim.lsp.buf.code_action, opts)

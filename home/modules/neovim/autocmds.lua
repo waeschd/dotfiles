@@ -34,6 +34,23 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   end,
 })
 
+-- Jumplist
+group = vim.api.nvim_create_augroup("JumplistReset", { clear = true })
+
+vim.api.nvim_create_autocmd("VimEnter", {
+  desc = "Clear jumplist on startup instead of restoring it from shada"
+    .. " (shada's \"'\" item bundles jumplist persistence together with"
+    .. " file marks, so this can't be disabled independently via 'shada')",
+  group = group,
+  callback = function()
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+      vim.api.nvim_win_call(win, function()
+        vim.cmd("clearjumps")
+      end)
+    end
+  end,
+})
+
 -- Terminal window settings
 group = vim.api.nvim_create_augroup("TerminalSettings", { clear = true })
 

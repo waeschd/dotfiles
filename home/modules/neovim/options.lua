@@ -53,6 +53,10 @@ vim.opt.clipboard:append("unnamedplus") -- Use system clipboard for all yank, de
 -- Search highlighting
 vim.opt.hlsearch = true -- Highlight all search results as you type
 
+-- Jumplist: jumping from the middle discards newer entries instead of
+-- appending, so CTRL-O/CTRL-I behave like a stack rather than a flat log
+vim.opt.jumpoptions = "stack"
+
 -- Default text settings --
 vim.opt.tabstop = 2 -- Number of visual spaces per TAB character
 vim.opt.softtabstop = 2 -- Number of spaces a <Tab> counts for while editing
