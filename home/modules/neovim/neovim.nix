@@ -16,6 +16,11 @@
       # ---- Git ---- (lazygit.nvim shells out to the `lazygit` TUI)
       lazygit
 
+      # ---- Treesitter ---- (nvim-treesitter's healthcheck/query tooling
+      # wants the `tree-sitter` CLI on PATH; parsers themselves are still
+      # baked in via nix, not compiled by this at runtime)
+      tree-sitter
+
       # ---- C/C++ ---- (clangd LSP + clang-format formatter + cpplint linter)
       clang-tools
       cpplint
