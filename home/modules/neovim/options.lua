@@ -14,13 +14,13 @@ vim.opt.splitright = true -- New vertical splits open to the right
 vim.opt.splitbelow = true -- New horizontal splits open below
 
 -- Line numbers
-vim.opt.number = true -- Show absolute line numbers
-vim.opt.relativenumber = true -- Show only absolute numbers (no relative numbers)
+vim.opt.number = true         -- Show absolute line numbers
+vim.opt.relativenumber = true -- Show relative line numbers (current line stays absolute)
 
 -- File backups and persistence
-vim.opt.swapfile = false -- Enable swap file for crash recovery
-vim.opt.backup = false -- Disable backup files (filename~)
-vim.opt.undofile = true -- Save undo history across sessions
+vim.opt.swapfile = false -- Disable swap files
+vim.opt.backup = false   -- Disable backup files (filename~)
+vim.opt.undofile = true  -- Save undo history across sessions
 
 -- Information to save and restore for sessions
 vim.opt.sessionoptions = {
@@ -42,7 +42,7 @@ vim.opt.inccommand = "split"
 
 -- Better colors and UI appearance
 vim.opt.termguicolors = true -- Enable 24-bit color support in terminal
-vim.opt.signcolumn = "yes" -- Always show the sign column (for git/lsp indicators)
+vim.opt.signcolumn = "yes"   -- Always show the sign column (for git/lsp indicators)
 
 -- Backspace behavior
 vim.opt.backspace = { "start", "eol", "indent" } -- Allow backspacing over indentation, line breaks, and insert start
@@ -58,16 +58,16 @@ vim.opt.hlsearch = true -- Highlight all search results as you type
 vim.opt.jumpoptions = "stack"
 
 -- Default text settings --
-vim.opt.tabstop = 2 -- Number of visual spaces per TAB character
-vim.opt.softtabstop = 2 -- Number of spaces a <Tab> counts for while editing
-vim.opt.shiftwidth = 2 -- Number of spaces to use for each step of (auto)indent
-vim.opt.expandtab = true -- Use Spaces instead of <TAB> when indenting
-vim.opt.wrap = false -- Enable line wrapping (long lines wrap to next line)
-vim.opt.sidescroll = 1 -- Scroll character by character (smoother)
-vim.opt.copyindent = true -- Copy indentation from the current line when starting a new one
+vim.opt.tabstop = 2        -- Number of visual spaces per TAB character
+vim.opt.softtabstop = 2    -- Number of spaces a <Tab> counts for while editing
+vim.opt.shiftwidth = 2     -- Number of spaces to use for each step of (auto)indent
+vim.opt.expandtab = true   -- Use Spaces instead of <TAB> when indenting
+vim.opt.wrap = true        -- Enable line wrapping (long lines wrap to next line)
+vim.opt.sidescroll = 1     -- Scroll character by character (smoother)
+vim.opt.copyindent = true  -- Copy indentation from the current line when starting a new one
 
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
+vim.opt.ignorecase = true -- Ignore case when searching
+vim.opt.smartcase = true  -- Override ignorecase when the search pattern has an uppercase letter
 
 -- Move statusline to the bottom
 vim.opt.cmdheight = 0
@@ -92,9 +92,7 @@ vim.diagnostic.config({
       [vim.diagnostic.severity.INFO] = signs.Info,
     },
   },
-  virtual_lines = false,
+  virtual_lines = false, -- Disable inline virtual-line diagnostics (signs are used instead)
 })
 
-vim.diagnostic.enable = true
-
-vim.opt.mousemoveevent = true
+vim.opt.mousemoveevent = true -- Enable mouse-move events (e.g. for hover-based UI)

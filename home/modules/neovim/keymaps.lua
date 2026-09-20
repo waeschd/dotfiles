@@ -28,6 +28,21 @@ vim.keymap.set("v", "p", '"_dp', opts)
 opts.desc = "Delete without saving to registers"
 vim.keymap.set({ "n", "v" }, "d", [["_d]], opts)
 
+opts.desc = "Change without saving to registers"
+vim.keymap.set({ "n", "v" }, "c", [["_c]], opts)
+
+opts.desc = "Delete to end of line without saving to registers"
+vim.keymap.set({ "n", "v" }, "D", [["_D]], opts)
+
+opts.desc = "Change to end of line without saving to registers"
+vim.keymap.set({ "n", "v" }, "C", [["_C]], opts)
+
+opts.desc = "Change line without saving to registers"
+vim.keymap.set({ "n", "v" }, "S", [["_S]], opts)
+
+opts.desc = "Delete char before cursor without saving to registers"
+vim.keymap.set({ "n", "v" }, "X", [["_X]], opts)
+
 -- Window navigation
 opts.desc = "Move to left split"
 vim.keymap.set("n", "<C-h>", "<C-w>h", opts)
@@ -45,17 +60,8 @@ vim.keymap.set("n", "<C-l>", "<C-w>l", opts)
 opts.desc = "Move cursor right in insert mode"
 vim.keymap.set("i", "<C-l>", "<Right>", opts)
 
-opts.desc = "Move cursor left in insert mode"
-vim.keymap.set("i", "<C-h>", "<Left>", opts)
-
-opts.desc = "Move cursor up in insert mode"
-vim.keymap.set("i", "<C-k>", "<Up>", opts)
-
 opts.desc = "Move cursor down in insert mode"
 vim.keymap.set("i", "<C-j>", "<Down>", opts)
-
-opts.desc = "Insert new line"
-vim.keymap.set("i", "<C-a>", "<NL>", opts)
 
 opts.desc = "Exit terminal insert mode"
 vim.keymap.set("t", "<C-x>", "<C-\\><C-n>", opts)
@@ -163,13 +169,8 @@ opts.desc = "Decrease window width"
 vim.keymap.set("n", "<M-,>", ":vertical resize -5<CR>", opts)
 
 -- Commentary
-opts.remap = true
-opts.desc = "Toggle comment line"
-vim.keymap.set("n", "<leader>cc", "gcc", opts)
-
-opts.desc = "Toggle comment selection"
-vim.keymap.set("v", "<leader>cc", "gc", opts)
-opts.remap = false
+vim.keymap.set("n", "<leader>cc", "gcc", { silent = true, remap = true, desc = "Toggle comment line" })
+vim.keymap.set("v", "<leader>cc", "gc", { silent = true, remap = true, desc = "Toggle comment selection" })
 
 -- List chars
 vim.keymap.set("n", "<leader>cw", function()
@@ -316,12 +317,10 @@ opts.desc = "(LSP) Rename"
 vim.keymap.set("n", "<leader>lr", vim.lsp.buf.rename, opts)
 
 opts.desc = "(LSP) Toggle inlay hints"
-if vim.lsp.inlay_hint then
-  vim.keymap.set("n", "<leader>lh", function()
-    local bufnr = vim.api.nvim_get_current_buf()
-    vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(), { bufnr })
-  end, opts)
-end
+vim.keymap.set("n", "<leader>lh", function()
+  local bufnr = vim.api.nvim_get_current_buf()
+  vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(), { bufnr })
+end, opts)
 
 -- Diagnostics
 opts.desc = "(Diagnostics) Toggle virtual lines"
