@@ -9,9 +9,9 @@
         name = "Sebastian Russer";
         email = "sebastian.russer@fau.de";
       };
-      aliases = {
+      alias = {
         word-diff = "diff --word-diff=color -b";
-	pr = "pull --rebase";
+        pr = "pull --rebase";
       };
       core = {
         editor = "nvim";
