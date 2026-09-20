@@ -6,3 +6,4 @@
 ++ (import ./git/git.nix { inherit pkgs lib; })
 ++ (import ./treesitter/treesitter.nix { inherit pkgs; })
 ++ (import ./which-key/which-key.nix { inherit pkgs; })
+++ (import ./virt-column/virt-column.nix { inherit pkgs; })
