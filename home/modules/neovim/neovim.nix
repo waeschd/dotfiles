@@ -51,6 +51,7 @@
 
     initLua = ''
       ${builtins.readFile ./options.lua}
+      ${builtins.readFile ./win-buffers.lua}
       ${builtins.readFile ./keymaps.lua}
       ${builtins.readFile ./autocmds.lua}
       ${builtins.readFile ./commands.lua}
