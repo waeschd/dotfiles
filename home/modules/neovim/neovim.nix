@@ -13,6 +13,9 @@
       # a much slower manual directory-polling backend otherwise.
       inotify-tools
 
+      # ---- Git ---- (lazygit.nvim shells out to the `lazygit` TUI)
+      lazygit
+
       # ---- C/C++ ---- (clangd LSP + clang-format formatter + cpplint linter)
       clang-tools
       cpplint

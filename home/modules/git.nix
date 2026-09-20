@@ -15,13 +15,29 @@
       };
       core = {
         editor = "nvim";
-	page = "diffnav";
       };
       init.defaultBranch = "main";
       pull.rebase = false;
-      interactive.diffFilter = "diffnav --color-only";
-      diffnav.side-by-side = true;
       merge.conflictStyle = "zdiff3";
     };
+  };
+
+  # delta is a stdout colorizer (not a full-screen program like diffnav), so
+  # it embeds cleanly both as the CLI's pager and inside lazygit's own diff
+  # panel below.
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
+    options = {
+      side-by-side = true;
+      wrap-max-lines = "unlimited";
+    };
+  };
+
+  programs.lazygit = {
+    enable = true;
+    settings.git.pagers = [
+      { pager = "delta --side-by-side --paging=never"; }
+    ];
   };
 }
