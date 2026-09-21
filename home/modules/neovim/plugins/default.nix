@@ -9,3 +9,4 @@
 ++ (import ./virt-column/virt-column.nix { inherit pkgs; })
 ++ (import ./undotree/undotree.nix { inherit pkgs; })
 ++ (import ./nvim-surround/nvim-surround.nix { inherit pkgs; })
+++ (import ./autoclose/autoclose.nix { inherit pkgs; })
