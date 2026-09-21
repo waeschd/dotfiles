@@ -11,3 +11,4 @@
 ++ (import ./nvim-surround/nvim-surround.nix { inherit pkgs; })
 ++ (import ./autoclose/autoclose.nix { inherit pkgs; })
 ++ (import ./neoscroll/neoscroll.nix { inherit pkgs; })
+++ (import ./trouble/trouble.nix { inherit pkgs; })
