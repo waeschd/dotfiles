@@ -64,6 +64,8 @@
     celluloid
     poppler-utils
     ripgrep
+    less
+    sshfs
   ];
 }
 
