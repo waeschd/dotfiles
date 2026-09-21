@@ -8,3 +8,4 @@
 ++ (import ./which-key/which-key.nix { inherit pkgs; })
 ++ (import ./virt-column/virt-column.nix { inherit pkgs; })
 ++ (import ./undotree/undotree.nix { inherit pkgs; })
+++ (import ./nvim-surround/nvim-surround.nix { inherit pkgs; })
