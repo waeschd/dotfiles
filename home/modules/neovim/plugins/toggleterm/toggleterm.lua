@@ -30,6 +30,62 @@ vim.keymap.set({ "n", "t" }, "<A-f>", function()
   _G.toggle_float_term()
 end, { noremap = true, silent = true })
 
+-- Cycle between open terminals (toggleterm has no built-in "next/prev
+-- terminal" mapping -- it only identifies terminals by number).
+local function current_term_id()
+  if vim.bo.buftype == "terminal" then
+    return vim.b.toggle_number
+  end
+end
+
+local function cycle_term(step)
+  local toggleterm = require("toggleterm.terminal")
+  local terms = toggleterm.get_all()
+
+  if not terms or vim.tbl_isempty(terms) then
+    vim.notify("No ToggleTerm terminals available", vim.log.levels.WARN)
+    return
+  end
+
+  local ids = {}
+  for _, term in ipairs(terms) do
+    if term.id ~= nil then
+      table.insert(ids, term.id)
+    end
+  end
+  table.sort(ids)
+
+  local current = current_term_id()
+  local idx = 1
+  if current then
+    for i, id in ipairs(ids) do
+      if id == current then
+        idx = i
+        break
+      end
+    end
+  end
+
+  local next_id = ids[((idx - 1 + step) % #ids) + 1]
+  if next_id == current then
+    return
+  end
+
+  local current_term = current and toggleterm.get(current)
+  if current_term then
+    current_term:close()
+  end
+  toggleterm.get(next_id):open()
+end
+
+vim.keymap.set({ "n", "t" }, "<A-]>", function()
+  cycle_term(1)
+end, { noremap = true, silent = true, desc = "Next ToggleTerm terminal" })
+
+vim.keymap.set({ "n", "t" }, "<A-[>", function()
+  cycle_term(-1)
+end, { noremap = true, silent = true, desc = "Previous ToggleTerm terminal" })
+
 -- Send visual selection to terminal
 local last_term_id = nil
 
