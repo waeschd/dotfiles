@@ -1,23 +1,39 @@
 -- Per-window buffer list: each window remembers, in a fixed order, only the
 -- buffers that have actually been displayed in it -- unlike :bnext/:bprevious,
 -- which cycle through every listed buffer in the whole session.
+--
+-- Note on window-groups.nvim (a similar-looking plugin checked as a
+-- reference): it enforces single-ownership -- a buffer can only ever be
+-- shown in one window at a time, and it forcibly reverts/redirects focus if
+-- you try to open the same buffer in a second window. We explicitly want
+-- the opposite (the same buffer visible in several windows, each tracking
+-- it independently), so that mechanism isn't reusable here. We did borrow
+-- its floating-window exclusion and its "land on the positional neighbor,
+-- not just the last buffer" close behavior below.
 local group = vim.api.nvim_create_augroup("WindowLocalBuffers", { clear = true })
+
+-- Never track unlisted/special buffers (quickfix, terminal, help, a
+-- plugin's own UI panel, ...) -- only real file/scratch buffers belong in
+-- a window's cycle history.
+local function is_eligible_buf(buf)
+  return vim.bo[buf].buflisted and vim.bo[buf].buftype == ""
+end
+
+local function is_floating(win)
+  return vim.api.nvim_win_get_config(win).relative ~= ""
+end
 
 vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
   group = group,
   callback = function()
     vim.schedule(function()
       local win = vim.api.nvim_get_current_win()
-      if not vim.api.nvim_win_is_valid(win) then
+      if not vim.api.nvim_win_is_valid(win) or is_floating(win) then
         return
       end
 
       local buf = vim.api.nvim_get_current_buf()
-
-      -- Never track unlisted/special buffers (quickfix, terminal, help,
-      -- a plugin's own UI panel, ...) -- only real file/scratch buffers
-      -- belong in a window's cycle history.
-      if not vim.bo[buf].buflisted or vim.bo[buf].buftype ~= "" then
+      if not is_eligible_buf(buf) then
         return
       end
 
@@ -31,6 +47,12 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
 
       table.insert(list, buf)
       vim.w[win].buf_history = list
+
+      -- cokeline (or any other tabline reading WinBufList()) already redrew
+      -- synchronously for the very event that got us here, i.e. *before*
+      -- this scheduled callback ran -- so it rendered against the stale
+      -- pre-update list. Force one more redraw now that the list is current.
+      pcall(vim.cmd, "redrawtabline")
     end)
   end,
 })
@@ -133,16 +155,21 @@ function _G.WinBufClose()
   end
 
   local list = get_win_list(win)
+  local removed_idx
   for i, buf in ipairs(list) do
     if buf == bufnr then
       table.remove(list, i)
+      removed_idx = i
       break
     end
   end
   vim.w[win].buf_history = list
 
   if #list > 0 then
-    vim.cmd.buffer(list[#list])
+    -- Land on the buffer that took the closed one's place in the list
+    -- (or the new last one, if it was at the end) rather than always
+    -- jumping to the oldest/last-opened buffer.
+    vim.cmd.buffer(list[math.min(removed_idx or #list, #list)])
   else
     vim.cmd("enew")
   end
