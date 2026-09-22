@@ -12,3 +12,4 @@
 ++ (import ./autoclose/autoclose.nix { inherit pkgs; })
 ++ (import ./neoscroll/neoscroll.nix { inherit pkgs; })
 ++ (import ./trouble/trouble.nix { inherit pkgs; })
+++ (import ./dropbar/dropbar.nix { inherit pkgs; })
