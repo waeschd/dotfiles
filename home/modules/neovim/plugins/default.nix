@@ -14,3 +14,4 @@
 ++ (import ./trouble/trouble.nix { inherit pkgs; })
 ++ (import ./dropbar/dropbar.nix { inherit pkgs; })
 ++ (import ./lualine/lualine.nix { inherit pkgs; })
+++ (import ./nvim-cokeline/nvim-cokeline.nix { inherit pkgs; })
