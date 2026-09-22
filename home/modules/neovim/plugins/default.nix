@@ -15,3 +15,4 @@
 ++ (import ./dropbar/dropbar.nix { inherit pkgs; })
 ++ (import ./lualine/lualine.nix { inherit pkgs; })
 ++ (import ./nvim-cokeline/nvim-cokeline.nix { inherit pkgs; })
+++ (import ./toggleterm/toggleterm.nix { inherit pkgs; })
