@@ -17,3 +17,4 @@
 ++ (import ./nvim-cokeline/nvim-cokeline.nix { inherit pkgs; })
 ++ (import ./toggleterm/toggleterm.nix { inherit pkgs; })
 ++ (import ./oil/oil.nix { inherit pkgs; })
+++ (import ./noice/noice.nix { inherit pkgs; })
