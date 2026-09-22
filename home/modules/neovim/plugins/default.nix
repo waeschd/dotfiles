@@ -13,3 +13,4 @@
 ++ (import ./neoscroll/neoscroll.nix { inherit pkgs; })
 ++ (import ./trouble/trouble.nix { inherit pkgs; })
 ++ (import ./dropbar/dropbar.nix { inherit pkgs; })
+++ (import ./lualine/lualine.nix { inherit pkgs; })
