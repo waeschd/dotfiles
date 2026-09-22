@@ -18,3 +18,4 @@
 ++ (import ./toggleterm/toggleterm.nix { inherit pkgs; })
 ++ (import ./oil/oil.nix { inherit pkgs; })
 ++ (import ./noice/noice.nix { inherit pkgs; })
+++ (import ./markview/markview.nix { inherit pkgs; })
