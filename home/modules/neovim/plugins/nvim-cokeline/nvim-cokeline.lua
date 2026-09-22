@@ -9,11 +9,11 @@ local function focused_bg()
 end
 
 local function other_fg()
-  return get_hex("StatusLineNC", "fg")
+  return get_hex("TabLine", "fg")
 end
 
 local function other_bg()
-  return get_hex("StatusLineNC", "bg")
+  return get_hex("TabLine", "bg")
 end
 
 local function normal_bg()
@@ -22,6 +22,19 @@ end
 
 require("cokeline").setup({
   fill_hl = "Normal",
+  show_if_buffers_are_at_least = 0,
+  buffers = {
+    -- Only show buffers that are in the *current* window's own list
+    -- (win-buffers.lua), not every buffer open anywhere.
+    filter_visible = function(buffer)
+      for _, buf in ipairs(WinBufList()) do
+        if buf == buffer.number then
+          return true
+        end
+      end
+      return false
+    end,
+  },
   tabs = {
     placement = "left",
     components = {

@@ -3,20 +3,35 @@
 -- which cycle through every listed buffer in the whole session.
 local group = vim.api.nvim_create_augroup("WindowLocalBuffers", { clear = true })
 
-vim.api.nvim_create_autocmd("BufWinEnter", {
+vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
   group = group,
-  callback = function(args)
-    local win = vim.api.nvim_get_current_win()
-    local list = vim.w[win].buf_history or {}
-
-    for _, buf in ipairs(list) do
-      if buf == args.buf then
+  callback = function()
+    vim.schedule(function()
+      local win = vim.api.nvim_get_current_win()
+      if not vim.api.nvim_win_is_valid(win) then
         return
       end
-    end
 
-    table.insert(list, args.buf)
-    vim.w[win].buf_history = list
+      local buf = vim.api.nvim_get_current_buf()
+
+      -- Never track unlisted/special buffers (quickfix, terminal, help,
+      -- a plugin's own UI panel, ...) -- only real file/scratch buffers
+      -- belong in a window's cycle history.
+      if not vim.bo[buf].buflisted or vim.bo[buf].buftype ~= "" then
+        return
+      end
+
+      local list = vim.w[win].buf_history or {}
+
+      for _, b in ipairs(list) do
+        if b == buf then
+          return
+        end
+      end
+
+      table.insert(list, buf)
+      vim.w[win].buf_history = list
+    end)
   end,
 })
 
@@ -63,8 +78,21 @@ function _G.WinBufPrev()
   cycle(-1)
 end
 
+-- Public getter for other plugins (e.g. a bufferline) that want to show
+-- only the current window's own buffer list instead of every buffer.
+function _G.WinBufList()
+  return get_win_list(vim.api.nvim_get_current_win())
+end
+
+-- Checks both the tracked history (a window that *has shown* this buffer
+-- before) and what's currently on screen (belt-and-suspenders: never delete
+-- a buffer some window is actually displaying right now, even if that
+-- window's history missed recording it for some other untracked reason).
 local function is_referenced_by_any_window(bufnr)
   for _, win in ipairs(vim.api.nvim_list_wins()) do
+    if vim.api.nvim_win_get_buf(win) == bufnr then
+      return true
+    end
     for _, buf in ipairs(vim.w[win].buf_history or {}) do
       if buf == bufnr then
         return true
