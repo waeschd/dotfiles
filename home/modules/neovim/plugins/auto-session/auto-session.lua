@@ -1,0 +1,98 @@
+local auto_session = require("auto-session")
+
+-- auto-session's own save/restore messages print the raw absolute path
+-- (e.g. "Saved session: /home/seru/Projects/foo"), with no option to
+-- abbreviate it. Suppress that built-in message and print our own with the
+-- home directory literally substituted out, using whatever path was
+-- actually being saved/restored (the given session_name if one was passed,
+-- since that's not necessarily the cwd, falling back to cwd otherwise).
+local function display_path(session_name)
+  local path = (session_name and session_name ~= "") and session_name or vim.fn.getcwd()
+  local home = vim.env.HOME
+  if home and home ~= "" then
+    path = path:gsub(vim.pesc(home), "~")
+  end
+  return path
+end
+
+local orig_save_session = auto_session.save_session
+auto_session.save_session = function(session_name, opts)
+  opts = opts or {}
+  local show = opts.show_message == nil or opts.show_message
+  opts.show_message = false
+  local ok = orig_save_session(session_name, opts)
+  if ok and show then
+    vim.notify("Saved session: " .. display_path(session_name))
+  end
+  return ok
+end
+
+local orig_restore_session = auto_session.restore_session
+auto_session.restore_session = function(session_name, opts)
+  opts = opts or {}
+  local show = opts.show_message == nil or opts.show_message
+  opts.show_message = false
+  local ok = orig_restore_session(session_name, opts)
+  if ok and show then
+    vim.notify("Restored session: " .. display_path(session_name))
+  end
+  return ok
+end
+
+auto_session.setup({
+  bypass_save_filetypes = { "alpha", "dashboard", "snacks_dashboard" },
+  auto_create = false,
+  save_extra_data = function(_)
+    local ok, breakpoints = pcall(require, "dap.breakpoints")
+    if not ok or not breakpoints then
+      return
+    end
+
+    local bps = {}
+    local breakpoints_by_buf = breakpoints.get()
+    for buf, buf_bps in pairs(breakpoints_by_buf) do
+      bps[vim.api.nvim_buf_get_name(buf)] = buf_bps
+    end
+    if vim.tbl_isempty(bps) then
+      return
+    end
+    local extra_data = {
+      breakpoints = bps,
+    }
+    return vim.fn.json_encode(extra_data)
+  end,
+
+  restore_extra_data = function(_, extra_data)
+    local function get_buffer_number(fpath)
+      local bufnr = vim.fn.bufnr(fpath, true)
+      -- Load the file if it wasn't loaded by the session
+      if vim.fn.bufloaded(bufnr) == 0 then
+        vim.api.nvim_buf_call(bufnr, vim.cmd.edit)
+      end
+      return bufnr
+    end
+
+    local json = vim.fn.json_decode(extra_data)
+
+    if json.breakpoints then
+      local ok, breakpoints = pcall(require, "dap.breakpoints")
+
+      if not ok or not breakpoints then
+        return
+      end
+      vim.notify("restoring breakpoints")
+      for buf_name, buf_bps in pairs(json.breakpoints) do
+        for _, bp in pairs(buf_bps) do
+          local line = bp.line
+          local opts = {
+            condition = bp.condition,
+            log_message = bp.logMessage,
+            hit_condition = bp.hitCondition,
+          }
+          local buf = get_buffer_number(buf_name)
+          breakpoints.set(opts, buf, line)
+        end
+      end
+    end
+  end,
+})

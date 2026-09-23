@@ -20,3 +20,4 @@
 ++ (import ./noice/noice.nix { inherit pkgs; })
 ++ (import ./markview/markview.nix { inherit pkgs; })
 ++ (import ./snacks/snacks.nix { inherit pkgs; })
+++ (import ./auto-session/auto-session.nix { inherit pkgs; })
