@@ -13,6 +13,11 @@
       # a much slower manual directory-polling backend otherwise.
       inotify-tools
 
+      # ---- snacks.nvim ---- (picker.files/grep shell out to `rg`; it's on
+      # the interactive shell's PATH via the user profile, but not
+      # guaranteed to be on Neovim's PATH depending on how it's launched)
+      ripgrep
+
       # ---- Git ---- (lazygit.nvim shells out to the `lazygit` TUI)
       lazygit
 
@@ -56,6 +61,11 @@
       bash-language-server
       shellcheck
       shfmt
+
+      # ---- snacks.nvim ---- (dashboard's git-status terminal panel shells
+      # out to these for its ASCII-art clock)
+      figlet
+      lolcat
     ];
 
     plugins = import ./plugins { inherit pkgs lib; };
