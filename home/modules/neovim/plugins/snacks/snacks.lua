@@ -35,7 +35,7 @@ local dashboard = {
       cmd = 'while true; do clear; date +"%H:%M:%S" | figlet -f standard; sleep 1; done',
       height = 5,
       indent = 10,
-      padding = 5,
+      padding = 4,
       ttl = 0,
     },
     { icon = " ", title = "Keymaps", section = "keys", indent = 2, padding = 1 },
@@ -47,8 +47,7 @@ local dashboard = {
         {
           icon = " ",
           title = "Git Status",
-          cmd = [[ git fetch > /dev/null 2>&1
-                if git rev-parse --abbrev-ref @{u} > /dev/null 2>&1; then
+          cmd = [[ if git rev-parse --abbrev-ref @{u} > /dev/null 2>&1; then
                   if [ "$(git rev-list --count HEAD..@{u})" -gt 0 ]; then
                     echo "󱞩 Current branch is behind."
                   else
@@ -58,7 +57,8 @@ local dashboard = {
                   echo "󱇯 Remote is not set up."
                 fi
                 echo "──────────────────────────────────"
-                git status -s]],
+                git status -s
+                sleep infinity]],
           height = 10,
         },
       }
