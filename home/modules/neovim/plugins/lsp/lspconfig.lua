@@ -6,6 +6,7 @@ vim.lsp.enable({
   "basedpyright",
   "harper_ls",
   "jsonls",
+  "bashls",
 })
 
 -- Harper adjustments

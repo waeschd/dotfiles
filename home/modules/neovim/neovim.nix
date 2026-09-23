@@ -50,6 +50,12 @@
 
       # ---- Markdown ---- (markdownlint formatter + diagnostics)
       markdownlint-cli
+
+      # ---- Bash ---- (bashls LSP; it shells out to shellcheck for
+      # diagnostics and shfmt for formatting when they're on PATH)
+      bash-language-server
+      shellcheck
+      shfmt
     ];
 
     plugins = import ./plugins { inherit pkgs lib; };
