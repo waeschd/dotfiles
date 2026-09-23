@@ -32,40 +32,15 @@ local dashboard = {
     {
       pane = 2,
       section = "terminal",
-      cmd = 'date +"%H:%M:%S" | figlet -f standard | lolcat',
+      cmd = 'while true; do clear; date +"%H:%M:%S" | figlet -f standard; sleep 1; done',
       height = 5,
       indent = 10,
       padding = 5,
-      interactive = false,
       ttl = 0,
     },
     { icon = " ", title = "Keymaps", section = "keys", indent = 2, padding = 1 },
     { pane = 2, icon = " ", title = "Recent Files", section = "recent_files", indent = 2, padding = 1 },
-    {
-      pane = 2,
-      icon = " ",
-      title = "Projects",
-      section = "projects",
-      indent = 2,
-      padding = 1,
-      dirs = function()
-        -- auto-session isn't ported yet -- degrade to an empty list rather
-        -- than erroring the whole dashboard when it's missing.
-        local ok, auto_session_lib = pcall(require, "auto-session.lib")
-        if not ok then
-          return {}
-        end
-
-        local sessions_dir = vim.fn.stdpath("data") .. "/sessions/"
-        local session_list = auto_session_lib.get_session_list(sessions_dir)
-
-        local session_paths = {}
-        for _, session in ipairs(session_list) do
-          table.insert(session_paths, session.display_name)
-        end
-        return session_paths
-      end,
-    },
+    { pane = 2, icon = " ", title = "Sessions", section = "sessions", indent = 2, padding = 1 },
     function()
       local in_git = Snacks.git.get_root() ~= nil
       local cmds = {
@@ -145,6 +120,33 @@ require("snacks").setup({
   -- (only `opts` is actually passed to setup()), so this never took effect.
   statuscolumn = { enabled = true },
 })
+
+Snacks.dashboard.sections.sessions = function()
+  local ok, auto_session_lib = pcall(require, "auto-session.lib")
+  if not ok then
+    return {}
+  end
+
+  local sessions_dir = vim.fn.stdpath("data") .. "/sessions/"
+  local session_list = auto_session_lib.get_session_list(sessions_dir)
+
+  local items = {}
+  for _, session in ipairs(session_list) do
+    local is_path = session.session_name:sub(1, 1) == "/"
+    table.insert(items, {
+      icon = "directory",
+      desc = is_path and vim.fn.fnamemodify(session.session_name, ":t") or session.session_name,
+      autokey = true,
+      action = function()
+        if is_path then
+          vim.fn.chdir(session.session_name)
+        end
+        require("auto-session").restore_session(is_path and nil or session.session_name)
+      end,
+    })
+  end
+  return items
+end
 
 vim.keymap.set("n", "<leader>sm", function()
   Snacks.picker()
