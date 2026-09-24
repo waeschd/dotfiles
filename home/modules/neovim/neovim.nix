@@ -66,6 +66,11 @@
       # out to these for its ASCII-art clock)
       figlet
       lolcat
+
+      # ---- nvim-dap ---- (gdb + lldb-dap adapter binaries; rust-gdb ships
+      # alongside the rustc package above)
+      gdb
+      lldb
     ];
 
     plugins = import ./plugins { inherit pkgs lib; };

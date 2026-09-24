@@ -21,3 +21,4 @@
 ++ (import ./markview/markview.nix { inherit pkgs; })
 ++ (import ./snacks/snacks.nix { inherit pkgs; })
 ++ (import ./auto-session/auto-session.nix { inherit pkgs; })
+++ (import ./dap/dap.nix { inherit pkgs; })
