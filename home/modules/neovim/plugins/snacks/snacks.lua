@@ -186,14 +186,17 @@ vim.api.nvim_create_user_command("HistoryEdit", function(cmd_args)
   end
   table.sort(keys)
 
-  -- Keep each line's original record (pattern/search/live) so editing
-  -- doesn't change how it behaves on recall -- only genuinely new lines
-  -- (no matching original) fall back to the source's own default.
+  -- Keep each line's original record so editing doesn't change how it
+  -- behaves on recall -- only genuinely new lines (no matching original)
+  -- fall back to the source's own default. Real picker sources (e.g.
+  -- "grep") record {pattern=, search=, live=} dicts; scoped Snacks.input
+  -- prompts (e.g. "grep_include"/"grep_exclude", see scoped_input below)
+  -- record plain strings -- tolerate both.
   local lines = {}
   local orig_by_text = {}
   for _, k in ipairs(keys) do
     local rec = data[k]
-    local text = (rec.search and rec.search ~= "") and rec.search or rec.pattern or ""
+    local text = type(rec) == "table" and ((rec.search and rec.search ~= "") and rec.search or rec.pattern or "") or rec
     if text ~= "" then
       table.insert(lines, text)
       orig_by_text[text] = rec
@@ -207,7 +210,11 @@ vim.api.nvim_create_user_command("HistoryEdit", function(cmd_args)
   vim.bo[buf].swapfile = false
   vim.api.nvim_buf_set_name(buf, "HistoryEdit: " .. source)
 
-  local default_live = (require("snacks.picker.config.sources")[source] or {}).live
+  -- Only real picker sources (e.g. "grep") use the {pattern=, search=,
+  -- live=} dict format; brand-new lines with no original record fall back
+  -- to that shape only for those, and to a plain string otherwise (see
+  -- the read side above for why both shapes need to round-trip).
+  local source_cfg = require("snacks.picker.config.sources")[source]
 
   vim.api.nvim_create_autocmd("BufWriteCmd", {
     buffer = buf,
@@ -217,7 +224,8 @@ vim.api.nvim_create_user_command("HistoryEdit", function(cmd_args)
       local idx = 1
       for _, line in ipairs(new_lines) do
         if line:match("%S") then
-          new_data[idx] = orig_by_text[line] or { pattern = line, search = line, live = default_live }
+          new_data[idx] = orig_by_text[line]
+            or (source_cfg and { pattern = line, search = line, live = source_cfg.live } or line)
           idx = idx + 1
         end
       end
@@ -287,8 +295,82 @@ vim.keymap.set("n", "<leader>ff", function()
   Snacks.picker.files()
 end, { desc = "(Snacks) Find files", silent = true })
 
+-- Snacks.input() (= vim.ui.input(), the small floating prompt with
+-- <Up>/<Down> history navigation) always records to one shared "input"
+-- history bucket: snacks/input.lua calls
+-- `require("snacks.picker.util.history").new("input", ...)` with that name
+-- hardcoded, with no option to override it. History.new() itself takes an
+-- arbitrary name, though, and is only ever asked for *synchronously*,
+-- before Snacks.input opens its window -- so rather than reimplementing
+-- that window, swap History.new out for just that one call so it gets the
+-- name we actually want, then immediately put it back.
+--
+-- This is what gives "picker_grep_include" and "picker_grep_exclude" their
+-- own separate, non-mixed history, editable the same way as any other
+-- picker source via `:HistoryEdit grep_include` / `:HistoryEdit
+-- grep_exclude` (same "picker_" .. source naming convention).
+--
+-- Also prefills the prompt with the last value it was confirmed with, so
+-- the common case of repeating/tweaking the last search doesn't need an
+-- <Up> press first. This is tracked separately from history browsing,
+-- in a small sidecar "<name>.last" file next to the "<name>.history" one,
+-- because input.lua's own `record()` drops empty confirms (never adds
+-- them to history) -- if "last used" were read back from history like
+-- <Up>/<Down> browsing is, confirming empty (no include/exclude filter)
+-- could never stick as the next default; it'd always fall back to
+-- whatever non-empty value was last recorded.
+local function scoped_input(history_name, opts, on_confirm)
+  local History = require("snacks.picker.util.history")
+  local wrapped_new = History.new
+  local last_path
+  History.new = function(_, o)
+    History.new = wrapped_new
+    local history = wrapped_new(history_name, o)
+    last_path = history.path:gsub("%.history$", ".last")
+    if opts.default == nil then
+      local fd = io.open(last_path, "r")
+      if fd then
+        opts.default = fd:read("*a")
+        fd:close()
+      else
+        opts.default = ""
+      end
+    end
+    return history
+  end
+  Snacks.input(opts, function(value)
+    if value ~= nil and last_path then
+      vim.fn.mkdir(vim.fn.fnamemodify(last_path, ":h"), "p")
+      local fd = io.open(last_path, "w")
+      if fd then
+        fd:write(value)
+        fd:close()
+      end
+    end
+    on_confirm(value)
+  end)
+end
+
+local function split_globs(raw)
+  local out = {}
+  for pat in raw:gmatch("[^,]+") do
+    table.insert(out, vim.trim(pat))
+  end
+  return out
+end
+
 vim.keymap.set("n", "<leader>fg", function()
-  Snacks.picker.grep()
+  scoped_input("picker_grep_include", { prompt = "Include (comma-separated globs)" }, function(include_raw)
+    if include_raw == nil then
+      return -- cancelled
+    end
+    scoped_input("picker_grep_exclude", { prompt = "Exclude (comma-separated globs)" }, function(exclude_raw)
+      if exclude_raw == nil then
+        return -- cancelled
+      end
+      Snacks.picker.grep({ glob = split_globs(include_raw), exclude = split_globs(exclude_raw) })
+    end)
+  end)
 end, { desc = "(Snacks) Find text", silent = true })
 
 vim.keymap.set("n", "<leader>cd", function()
