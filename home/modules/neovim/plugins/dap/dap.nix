@@ -12,4 +12,11 @@ with pkgs.vimPlugins;
     type = "lua";
     config = builtins.readFile ./dap.lua;
   }
+
+  # ---- nvim-dap-view ----
+  {
+    plugin = nvim-dap-view;
+    type = "lua";
+    config = builtins.readFile ./dap-view.lua;
+  }
 ]

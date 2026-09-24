@@ -13,7 +13,7 @@ require("nvim-dap-virtual-text").setup({
 dap.adapters.gdb = {
   type = "executable",
   command = "gdb",
-  args = { "--interpreter=dap", "-x", "gdbinit_kernel" },
+  args = { "--interpreter=dap" },
 }
 
 dap.adapters["lldb-dap"] = {
@@ -26,6 +26,17 @@ dap.adapters["rust-gdb"] = {
   command = "rust-gdb",
   args = { "--interpreter=dap", "--eval-command", "set print pretty on" },
 }
+
+-- GDB's DAP mode has no "run these commands after attach" field, so
+-- `autorun` in a launch.json config isn't real GDB DAP syntax -- it's
+-- just an extra key nvim-dap leaves untouched on `session.config`. Once
+-- the adapter reports it's initialized, replay each command through the
+-- REPL ourselves (GDB evaluates `repl`-context requests as CLI commands).
+dap.listeners.after.event_initialized["autorun"] = function(session)
+  for _, cmd in ipairs(session.config.autorun or {}) do
+    dap.repl.execute(cmd)
+  end
+end
 
 -- repl_execute helper
 local function repl_execute(text)
@@ -140,10 +151,10 @@ vim.keymap.set("n", "<S-Up>", function()
 end, { desc = "(Debug) Down one frame", silent = true })
 
 -- Highlights and Icons
-vim.fn.sign_define("DapBreakpoint", { text = "", texthl = "DiagnosticError" })
-vim.fn.sign_define("DapBreakpointCondition", { text = "", texthl = "DiagnosticError" })
-vim.fn.sign_define("DapBreakpointRejected", { text = "", texthl = "DiagnosticError" })
-vim.fn.sign_define("DapLogPoint", { text = "", texthl = "DiagnosticWarn" })
+vim.fn.sign_define("DapBreakpoint", { text = "", texthl = "DapUIStop" })
+vim.fn.sign_define("DapBreakpointCondition", { text = "", texthl = "DapUIStop" })
+vim.fn.sign_define("DapBreakpointRejected", { text = "", texthl = "DapUIStop" })
+vim.fn.sign_define("DapLogPoint", { text = "", texthl = "DapUIScope" })
 
 vim.api.nvim_create_autocmd("ColorScheme", {
   pattern = "*",
@@ -151,4 +162,4 @@ vim.api.nvim_create_autocmd("ColorScheme", {
     vim.api.nvim_set_hl(0, "DapStoppedBg", { bg = "#604918" })
   end,
 })
-vim.fn.sign_define("DapStopped", { text = "", texthl = "@variable.parameter.vimdoc", linehl = "DapStoppedBg" })
+vim.fn.sign_define("DapStopped", { text = "", texthl = "@variable.parameter.vimdoc", linehl = "DapStoppedBg" })
