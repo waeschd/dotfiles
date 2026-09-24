@@ -16,6 +16,16 @@ dap.adapters.gdb = {
   args = { "--interpreter=dap" },
 }
 
+-- cppdbg (Microsoft's OpenDebugAD7/MIEngine, from the VS Code C/C++
+-- extension, wired in via nix -- see dap.nix). Unlike native GDB-DAP
+-- above, this wraps gdb/lldb via the MI protocol, which is what gives
+-- you the `,x`/`,b` watch format specifiers and friendlier `display`
+-- handling -- neither of those are part of DAP or GDB itself.
+dap.adapters.cppdbg = {
+  type = "executable",
+  command = vim.g.opendebugad7_path,
+}
+
 dap.adapters["lldb-dap"] = {
   type = "executable",
   command = "lldb-dap",
@@ -34,7 +44,11 @@ dap.adapters["rust-gdb"] = {
 -- REPL ourselves (GDB evaluates `repl`-context requests as CLI commands).
 dap.listeners.after.event_initialized["autorun"] = function(session)
   for _, cmd in ipairs(session.config.autorun or {}) do
-    dap.repl.execute(cmd)
+    if session.config.type == "cppdbg" then
+      dap.repl.execute("-exec " .. cmd)
+    else
+      dap.repl.execute(cmd)
+    end
   end
 end
 
@@ -42,7 +56,11 @@ end
 local function repl_execute(text)
   local session = dap.session()
   if session then
-    dap.repl.execute(text)
+    if session.config.type == "cppdbg" then
+      dap.repl.execute("-exec " .. text)
+    else
+      dap.repl.execute(text)
+    end
   end
 end
 
@@ -52,7 +70,14 @@ vim.keymap.set({ "n", "i" }, "<F5>", function()
 end, { desc = "(Debug) Continue", silent = true })
 
 vim.keymap.set({ "n" }, "<leader>dsd", function()
-  dap.disconnect()
+  local session = dap.session()
+  if session then
+    if session.config.type == "cppdbg" then
+      dap.repl.execute("-exec detach")
+    else
+      dap.disconnect()
+    end
+  end
 end, { desc = "(Debug) Detach", silent = true })
 
 vim.keymap.set({ "n" }, "<leader>dst", function()
