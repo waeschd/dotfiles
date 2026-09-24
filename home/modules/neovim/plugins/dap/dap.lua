@@ -22,6 +22,7 @@ dap.adapters.gdb = {
 -- you the `,x`/`,b` watch format specifiers and friendlier `display`
 -- handling -- neither of those are part of DAP or GDB itself.
 dap.adapters.cppdbg = {
+  id = "cppdbg",
   type = "executable",
   command = vim.g.opendebugad7_path,
 }
@@ -36,6 +37,54 @@ dap.adapters["rust-gdb"] = {
   command = "rust-gdb",
   args = { "--interpreter=dap", "--eval-command", "set print pretty on" },
 }
+
+-- nvim-dap only expands its own `${input:...}` syntax in launch.json --
+-- it has no idea what VS Code's `${workspaceFolder}`/`${workspaceRoot}`/
+-- `${file}` etc. mean, and passes them through to the adapter literally.
+-- Expand the common ones ourselves on every resolved config.
+
+-- Reuse whatever root an attached LSP client (clangd, rust_analyzer, ...)
+-- already resolved for this buffer, so it matches what's used elsewhere.
+-- Only fall back to our own marker search if nothing is attached yet.
+local function project_root()
+  for _, client in ipairs(vim.lsp.get_clients({ bufnr = 0 })) do
+    if client.config.root_dir then
+      return client.config.root_dir
+    end
+  end
+  return vim.fs.root(0, { ".git", ".vscode" }) or vim.fn.getcwd()
+end
+
+local function expand_vscode_vars(value)
+  if type(value) == "table" then
+    local result = {}
+    for k, v in pairs(value) do
+      result[k] = expand_vscode_vars(v)
+    end
+    return result
+  end
+  if type(value) ~= "string" then
+    return value
+  end
+  local replacements = {
+    ["${workspaceFolder}"] = project_root(),
+    ["${workspaceRoot}"] = project_root(),
+    ["${file}"] = vim.fn.expand("%:p"),
+    ["${fileDirname}"] = vim.fn.expand("%:p:h"),
+    ["${fileBasename}"] = vim.fn.expand("%:t"),
+    ["${fileBasenameNoExtension}"] = vim.fn.expand("%:t:r"),
+  }
+  for placeholder, replacement in pairs(replacements) do
+    value = value:gsub(placeholder:gsub("[%(%)%.%%%+%-%*%?%[%]%^%$]", "%%%1"), function()
+      return replacement
+    end)
+  end
+  return value
+end
+
+dap.listeners.on_config["vscode_vars"] = function(config)
+  return expand_vscode_vars(config)
+end
 
 -- GDB's DAP mode has no "run these commands after attach" field, so
 -- `autorun` in a launch.json config isn't real GDB DAP syntax -- it's
