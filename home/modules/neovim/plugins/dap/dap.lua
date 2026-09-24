@@ -88,10 +88,22 @@ end
 
 -- GDB's DAP mode has no "run these commands after attach" field, so
 -- `autorun` in a launch.json config isn't real GDB DAP syntax -- it's
--- just an extra key nvim-dap leaves untouched on `session.config`. Once
--- the adapter reports it's initialized, replay each command through the
--- REPL ourselves (GDB evaluates `repl`-context requests as CLI commands).
-dap.listeners.after.event_initialized["autorun"] = function(session)
+-- just an extra key nvim-dap leaves untouched on `session.config`. Replay
+-- each command through the REPL ourselves once attached (GDB evaluates
+-- `repl`-context requests as CLI commands).
+--
+-- This has to be `event_stopped`, not `event_initialized`: initialized
+-- fires as soon as the adapter reports capabilities, which is *before*
+-- `configurationDone` is sent -- and configurationDone is what actually
+-- triggers GDB's deferred attach/launch. Running commands on initialized
+-- means they fire before the target is even attached to. `event_stopped`
+-- only fires once the target has genuinely halted, which for `attach` is
+-- exactly the point right after `target remote` completes.
+dap.listeners.after.event_stopped["autorun"] = function(session)
+  if session.autorun_done then
+    return
+  end
+  session.autorun_done = true
   for _, cmd in ipairs(session.config.autorun or {}) do
     if session.config.type == "cppdbg" then
       dap.repl.execute("-exec " .. cmd)
