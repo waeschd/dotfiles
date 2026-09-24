@@ -65,7 +65,9 @@
     poppler-utils
     ripgrep
     less
+    figlet
     sshfs
+    psmisc
   ];
 }
 

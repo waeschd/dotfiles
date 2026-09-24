@@ -115,11 +115,40 @@ require("snacks").setup({
       grep = false, -- show file debug info
       proc = false, -- show proc debug info
     },
+    win = {
+      input = {
+        keys = {
+          ["<c-g>"] = false,
+          ["<a-g>"] = { "toggle_live", mode = { "i", "n" } },
+        },
+      },
+      list = {
+        keys = {
+          ["<c-g>"] = false,
+          ["<a-g>"] = "toggle_live",
+        },
+      },
+    },
   },
   -- was a dead sibling key next to `opts` in the original lazy.nvim spec
   -- (only `opts` is actually passed to setup()), so this never took effect.
   statuscolumn = { enabled = true },
 })
+
+-- Per-project picker search history. Snacks keeps one global history file
+-- per source (~/.local/share/nvim/snacks/picker_<source>.history) with no
+-- project awareness at all -- this patches the one place that builds that
+-- filename so it also incorporates the current project root, giving each
+-- project its own separate history instead of one shared across all of them.
+do
+  local History = require("snacks.picker.util.history")
+  local orig_history_new = History.new
+  History.new = function(name, opts)
+    local root = Snacks.git.get_root() or vim.fn.getcwd()
+    local suffix = vim.fn.fnamemodify(root, ":t"):gsub("[^%w_-]", "_") .. "_" .. vim.fn.sha256(root):sub(1, 8)
+    return orig_history_new(name .. "_" .. suffix, opts)
+  end
+end
 
 Snacks.dashboard.sections.sessions = function()
   local ok, auto_session_lib = pcall(require, "auto-session.lib")
