@@ -150,6 +150,104 @@ do
   end
 end
 
+-- :HistoryEdit [source] -- edit the current project's picker search history
+-- (default source: grep) as a plain text buffer, one search per line.
+-- snacks' own .history file is LuaJIT string.buffer binary, not text --
+-- hand-editing it isn't viable (no reliable delimiter between entries, and
+-- every length-prefix after an edit point would go stale). This instead
+-- decodes it into a real table, shows it as editable lines, and re-encodes
+-- on save. Deleting a line removes that search; adding a line adds one;
+-- reordering changes chronological order (oldest at the top).
+local function history_path(source)
+  local root = Snacks.git.get_root() or vim.fn.getcwd()
+  local suffix = vim.fn.fnamemodify(root, ":t"):gsub("[^%w_-]", "_") .. "_" .. vim.fn.sha256(root):sub(1, 8)
+  local name = "picker_" .. source .. "_" .. suffix
+  return vim.fn.stdpath("data") .. "/snacks/" .. name .. ".history", name
+end
+
+vim.api.nvim_create_user_command("HistoryEdit", function(cmd_args)
+  local source = cmd_args.args ~= "" and cmd_args.args or "grep"
+  local path, name = history_path(source)
+
+  local data = {}
+  local fd = io.open(path, "rb")
+  if fd then
+    local raw = fd:read("*a")
+    fd:close()
+    local ok, decoded = pcall(require("string.buffer").decode, raw)
+    if ok and type(decoded) == "table" then
+      data = decoded
+    end
+  end
+
+  local keys = {}
+  for k in pairs(data) do
+    table.insert(keys, k)
+  end
+  table.sort(keys)
+
+  -- Keep each line's original record (pattern/search/live) so editing
+  -- doesn't change how it behaves on recall -- only genuinely new lines
+  -- (no matching original) fall back to the source's own default.
+  local lines = {}
+  local orig_by_text = {}
+  for _, k in ipairs(keys) do
+    local rec = data[k]
+    local text = (rec.search and rec.search ~= "") and rec.search or rec.pattern or ""
+    if text ~= "" then
+      table.insert(lines, text)
+      orig_by_text[text] = rec
+    end
+  end
+
+  local buf = vim.api.nvim_create_buf(false, false)
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+  vim.bo[buf].filetype = "snacks_history_edit"
+  vim.bo[buf].buftype = "acwrite"
+  vim.bo[buf].swapfile = false
+  vim.api.nvim_buf_set_name(buf, "HistoryEdit: " .. source)
+
+  local default_live = (require("snacks.picker.config.sources")[source] or {}).live
+
+  vim.api.nvim_create_autocmd("BufWriteCmd", {
+    buffer = buf,
+    callback = function()
+      local new_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+      local new_data = {}
+      local idx = 1
+      for _, line in ipairs(new_lines) do
+        if line:match("%S") then
+          new_data[idx] = orig_by_text[line] or { pattern = line, search = line, live = default_live }
+          idx = idx + 1
+        end
+      end
+
+      vim.fn.mkdir(vim.fn.fnamemodify(path, ":h"), "p")
+      local out = io.open(path, "w+b")
+      if not out then
+        vim.notify("Failed to save history file: " .. path, vim.log.levels.ERROR)
+        return
+      end
+      out:write(require("string.buffer").encode(new_data))
+      out:close()
+
+      -- Drop the in-memory cache so the next picker for this source reads
+      -- our freshly written file instead of a stale copy from earlier in
+      -- this session (History.new caches loaded stores by name).
+      require("snacks.picker.util.history").stores[name] = nil
+
+      vim.bo[buf].modified = false
+      vim.notify(("Saved %s history: %d entries"):format(source, idx - 1))
+    end,
+  })
+
+  vim.api.nvim_set_current_buf(buf)
+  vim.bo[buf].modified = false
+end, {
+  nargs = "?",
+  desc = "Edit the current project's picker search history (default source: grep) as plain text",
+})
+
 Snacks.dashboard.sections.sessions = function()
   local ok, auto_session_lib = pcall(require, "auto-session.lib")
   if not ok then
