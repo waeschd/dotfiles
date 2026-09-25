@@ -2,7 +2,6 @@ require("onedark").setup({
   style = "warmer",
   highlights = {
     NormalFloat = { bg = "NONE" },
-    -- FloatBorder     = { bg = "NONE" },
   },
 })
 

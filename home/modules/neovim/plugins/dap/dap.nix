@@ -1,5 +1,4 @@
 { pkgs, ... }:
-with pkgs.vimPlugins;
 let
   # cppdbg's OpenDebugAD7 binary, straight from the actual VS Code C/C++
   # extension package -- nix-managed and reproducible, no Mason/runtime
@@ -9,13 +8,13 @@ let
 in
 [
   # ---- bare deps (no config of their own) ----
-  nvim-dap-virtual-text
-  lazydev-nvim
-  overseer-nvim
+  pkgs.vimPlugins.nvim-dap-virtual-text
+  pkgs.vimPlugins.lazydev-nvim
+  pkgs.vimPlugins.overseer-nvim
 
   # ---- nvim-dap ----
   {
-    plugin = nvim-dap;
+    plugin = pkgs.vimPlugins.nvim-dap;
     type = "lua";
     config = ''
       vim.g.opendebugad7_path = "${opendebugad7}"
@@ -24,7 +23,7 @@ in
 
   # ---- nvim-dap-view ----
   {
-    plugin = nvim-dap-view;
+    plugin = pkgs.vimPlugins.nvim-dap-view;
     type = "lua";
     config = builtins.readFile ./dap-view.lua;
   }

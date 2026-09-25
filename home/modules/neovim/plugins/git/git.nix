@@ -1,17 +1,16 @@
-{ pkgs, lib, ... }:
-with pkgs.vimPlugins;
+{ pkgs, ... }:
 [
   # ---- gitsigns.nvim ----
   {
-    plugin = gitsigns-nvim;
+    plugin = pkgs.vimPlugins.gitsigns-nvim;
     type = "lua";
     config = builtins.readFile ./gitsigns.lua;
   }
 
   # ---- lazygit.nvim (needs the `lazygit` TUI itself on PATH) ----
-  plenary-nvim
+  pkgs.vimPlugins.plenary-nvim
   {
-    plugin = lazygit-nvim;
+    plugin = pkgs.vimPlugins.lazygit-nvim;
     type = "lua";
     config = builtins.readFile ./lazygit.lua;
   }

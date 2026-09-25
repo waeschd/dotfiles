@@ -7,34 +7,6 @@ local luasnip = require("luasnip")
 
 local select_opts = { behavior = cmp.SelectBehavior.Select }
 
-local kind_icons = {
-  Text = "",
-  Method = "󰆧",
-  Function = "󰡱",
-  Constructor = "",
-  Field = "󰇽",
-  Variable = "󰂡",
-  Class = "󰠱",
-  Interface = "",
-  Module = "",
-  Property = "󰜢",
-  Unit = "",
-  Value = "󰎠",
-  Enum = "",
-  Keyword = "󰌋",
-  Snippet = "",
-  Color = "󰏘 ",
-  File = "󰈙",
-  Reference = "",
-  Folder = "󰉋",
-  EnumMember = "",
-  Constant = "󰏿",
-  Struct = "",
-  Event = "",
-  Operator = "󰆕",
-  TypeParameter = "󰅲",
-}
-
 vim.api.nvim_create_autocmd("ColorScheme", {
   pattern = "*",
   callback = function()

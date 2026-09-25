@@ -1,24 +1,27 @@
-{ pkgs, lib, ... }:
-[
+{ pkgs, ... }:
+let
+  mkPlugin = path: import path { inherit pkgs; };
+in
+builtins.concatMap mkPlugin [
+  ./colorscheme/colorscheme.nix
+  ./lsp/lsp.nix
+  ./git/git.nix
+  ./treesitter/treesitter.nix
+  ./which-key/which-key.nix
+  ./virt-column/virt-column.nix
+  ./undotree/undotree.nix
+  ./nvim-surround/nvim-surround.nix
+  ./autoclose/autoclose.nix
+  ./neoscroll/neoscroll.nix
+  ./trouble/trouble.nix
+  ./dropbar/dropbar.nix
+  ./lualine/lualine.nix
+  ./nvim-cokeline/nvim-cokeline.nix
+  ./toggleterm/toggleterm.nix
+  ./oil/oil.nix
+  ./noice/noice.nix
+  ./markview/markview.nix
+  ./snacks/snacks.nix
+  ./auto-session/auto-session.nix
+  ./dap/dap.nix
 ]
-++ (import ./colorscheme/colorscheme.nix { inherit pkgs; })
-++ (import ./lsp/lsp.nix { inherit pkgs lib; })
-++ (import ./git/git.nix { inherit pkgs lib; })
-++ (import ./treesitter/treesitter.nix { inherit pkgs; })
-++ (import ./which-key/which-key.nix { inherit pkgs; })
-++ (import ./virt-column/virt-column.nix { inherit pkgs; })
-++ (import ./undotree/undotree.nix { inherit pkgs; })
-++ (import ./nvim-surround/nvim-surround.nix { inherit pkgs; })
-++ (import ./autoclose/autoclose.nix { inherit pkgs; })
-++ (import ./neoscroll/neoscroll.nix { inherit pkgs; })
-++ (import ./trouble/trouble.nix { inherit pkgs; })
-++ (import ./dropbar/dropbar.nix { inherit pkgs; })
-++ (import ./lualine/lualine.nix { inherit pkgs; })
-++ (import ./nvim-cokeline/nvim-cokeline.nix { inherit pkgs; })
-++ (import ./toggleterm/toggleterm.nix { inherit pkgs; })
-++ (import ./oil/oil.nix { inherit pkgs; })
-++ (import ./noice/noice.nix { inherit pkgs; })
-++ (import ./markview/markview.nix { inherit pkgs; })
-++ (import ./snacks/snacks.nix { inherit pkgs; })
-++ (import ./auto-session/auto-session.nix { inherit pkgs; })
-++ (import ./dap/dap.nix { inherit pkgs; })

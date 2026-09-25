@@ -29,22 +29,19 @@ local function component_fg()
   return get_hex("Normal", "fg")
 end
 
-local function get_lualine_theme()
+local function build_lualine_theme()
   local custom_ayu_dark = require("lualine.themes.ayu_dark")
-  custom_ayu_dark.normal.c = { fg = normal_fg(), bg = normal_bg() }
-  custom_ayu_dark.insert.c = { fg = normal_fg(), bg = normal_bg() }
-  custom_ayu_dark.visual.c = { fg = normal_fg(), bg = normal_bg() }
-  custom_ayu_dark.replace.c = { fg = normal_fg(), bg = normal_bg() }
-  custom_ayu_dark.inactive.c = { fg = normal_fg(), bg = normal_bg() }
+  local fg, bg = normal_fg(), normal_bg()
 
-  custom_ayu_dark.normal.x = { fg = normal_fg(), bg = normal_bg() }
-  custom_ayu_dark.insert.x = { fg = normal_fg(), bg = normal_bg() }
-  custom_ayu_dark.visual.x = { fg = normal_fg(), bg = normal_bg() }
-  custom_ayu_dark.replace.x = { fg = normal_fg(), bg = normal_bg() }
-  custom_ayu_dark.inactive.x = { fg = normal_fg(), bg = normal_bg() }
+  for _, mode in ipairs({ "normal", "insert", "visual", "replace", "inactive" }) do
+    custom_ayu_dark[mode].c = { fg = fg, bg = bg }
+    custom_ayu_dark[mode].x = { fg = fg, bg = bg }
+  end
 
   return custom_ayu_dark
 end
+
+local lualine_theme = build_lualine_theme()
 -----------------------------------------------------------------------------------------------------
 local function seperator(opts)
   return {
@@ -366,7 +363,7 @@ require("lualine").setup({
     component_separators = "",
     section_separators = "",
     padding = 0,
-    theme = get_lualine_theme,
+    theme = lualine_theme,
     globalstatus = true,
     always_divide_middle = true,
     disabled_filetypes = {

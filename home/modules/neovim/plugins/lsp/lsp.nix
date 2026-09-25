@@ -1,37 +1,35 @@
-{ pkgs, lib, ... }:
-with pkgs.vimPlugins;
+{ pkgs, ... }:
 [
   # ---- nvim-lspconfig ----
   {
-    plugin = nvim-lspconfig;
+    plugin = pkgs.vimPlugins.nvim-lspconfig;
     type = "lua";
     config = builtins.readFile ./lspconfig.lua;
   }
 
   # ---- nvim-cmp + its source plugins (bare deps, no config of their own) ----
-  cmp-nvim-lsp
-  cmp-buffer
-  cmp-path
-  cmp-cmdline
-  cmp_luasnip
-  luasnip
-  lspkind-nvim
+  pkgs.vimPlugins.cmp-nvim-lsp
+  pkgs.vimPlugins.cmp-buffer
+  pkgs.vimPlugins.cmp-path
+  pkgs.vimPlugins.cmp-cmdline
+  pkgs.vimPlugins.cmp_luasnip
+  pkgs.vimPlugins.luasnip
   {
-    plugin = nvim-cmp;
+    plugin = pkgs.vimPlugins.nvim-cmp;
     type = "lua";
     config = builtins.readFile ./cmp.lua;
   }
 
   # ---- conform.nvim (formatting) ----
   {
-    plugin = conform-nvim;
+    plugin = pkgs.vimPlugins.conform-nvim;
     type = "lua";
     config = builtins.readFile ./conform.lua;
   }
 
   # ---- nvim-lint (linting) ----
   {
-    plugin = nvim-lint;
+    plugin = pkgs.vimPlugins.nvim-lint;
     type = "lua";
     config = builtins.readFile ./lint.lua;
   }

@@ -130,8 +130,6 @@ require("snacks").setup({
       },
     },
   },
-  -- was a dead sibling key next to `opts` in the original lazy.nvim spec
-  -- (only `opts` is actually passed to setup()), so this never took effect.
   statuscolumn = { enabled = true },
 })
 
