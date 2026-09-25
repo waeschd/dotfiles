@@ -99,11 +99,32 @@ end
 -- means they fire before the target is even attached to. `event_stopped`
 -- only fires once the target has genuinely halted, which for `attach` is
 -- exactly the point right after `target remote` completes.
+--
+-- Even at event_stopped, MIEngine (cppdbg) can still be mid-way through
+-- building its internal stack-frame/thread state -- `-exec` needs a valid
+-- frameId to evaluate against, and that only becomes valid once a
+-- stackTrace request has round-tripped through the adapter. Firing right on
+-- event_stopped can race ahead of that and fail with "can't evaluate
+-- expression on the specified stack frame", even though the exact same
+-- command succeeds a moment later.
+--
+-- Rather than guess a delay, wait for the real signal: nvim-dap always
+-- issues its own stackTrace request right after a stop (to populate the
+-- UI), so we piggyback on that request's completion, which deterministically
+-- means MIEngine has settled frame data.
 dap.listeners.after.event_stopped["autorun"] = function(session)
-  if session.autorun_done then
+  if session.autorun_done or session.autorun_pending then
+    return
+  end
+  session.autorun_pending = true
+end
+
+dap.listeners.after.stackTrace["autorun"] = function(session)
+  if not session.autorun_pending or session.autorun_done then
     return
   end
   session.autorun_done = true
+  session.autorun_pending = false
   for _, cmd in ipairs(session.config.autorun or {}) do
     if session.config.type == "cppdbg" then
       dap.repl.execute("-exec " .. cmd)
