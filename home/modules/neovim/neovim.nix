@@ -85,17 +85,11 @@
   };
 
   # Neovim's native ftplugin loading auto-sources
-  # `~/.config/nvim/after/ftplugin/<filetype>.lua` whenever that filetype is
-  # set, so these just need to land in place.
+  # `~/.config/nvim/after/ftplugin/<filetype>.lua` whenever that filetype is set
   xdg.configFile = {
-    "nvim/after/ftplugin/c.lua".source        = ./ftplugin/c.lua;
-    "nvim/after/ftplugin/lua.lua".source      = ./ftplugin/lua.lua;
-    "nvim/after/ftplugin/markdown.lua".source = ./ftplugin/markdown.lua;
+    "nvim/after/ftplugin".source = ./ftplugin;
 
-    # Project-starter files (clang-format/editorconfig/markdownlint configs)
-    # copied by hand into a new project -- not read by Neovim itself.
-    "nvim/templates/c/.clang-format".source        = ./templates/c/.clang-format;
-    "nvim/templates/c/.editorconfig".source        = ./templates/c/.editorconfig;
-    "nvim/templates/md/.markdownlint.yaml".source  = ./templates/md/.markdownlint.yaml;
+    # Project-starter files
+    "nvim/templates".source = ./templates;
   };
 }
