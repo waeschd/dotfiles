@@ -1,0 +1,34 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "gdb",
+      "request": "attach",
+      "name": "Debug",
+      "target": ":1234",
+      "remote": true,
+      "cwd": "${workspaceRoot}",
+      "autorun": [
+        "set architecture i386:x86-64",
+        "source ${workspaceRoot}/.gdbinit"
+      ],
+      "stopAtConnect": true
+    },
+    {
+      "type": "cppdbg",
+      "request": "launch",
+      "name": "Debug (cppdbg)",
+      "MIMode": "gdb",
+      "program": "${workspaceRoot}/test",
+      "miDebuggerServerAddress": "localhost:1234",
+      "stopAtConnect": true,
+      "stopAtEntry": true,
+      "cwd": "${workspaceRoot}",
+      "setupCommands": [
+        { "text": "set architecture i386:x86-64", "ignoreFailures": false },
+        { "text": "source ${workspaceRoot}/.gdbinit", "ignoreFailures": false }
+      ]
+    }
+  ]
+}
+
