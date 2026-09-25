@@ -36,8 +36,11 @@
 
   programs.lazygit = {
     enable = true;
-    settings.git.pagers = [
-      { pager = "delta --side-by-side --paging=never"; }
-    ];
+    settings.git = {
+      autoFetch = false;
+      pagers = [
+        { pager = "delta --side-by-side --paging=never"; }
+      ];
+    };
   };
 }
