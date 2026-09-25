@@ -9,13 +9,6 @@ local select_opts = { behavior = cmp.SelectBehavior.Select }
 
 local kind_icons = require("lspkind").symbol_map
 
-local source_icons = {
-  nvim_lsp = "",
-  luasnip = "",
-  buffer = "",
-  path = "",
-}
-
 vim.api.nvim_create_autocmd("ColorScheme", {
   pattern = "*",
   callback = function()
@@ -74,19 +67,17 @@ cmp.setup({
   window = {
     completion = cmp.config.window.bordered({
       border = "rounded",
-      winhighlight = "Normal:Normal,FloatBorder:CmpGhostBorder,CursorLine:Visual,Search:None",
+      winhighlight = "Normal:Normal,FloatBorder:Normal,CursorLine:Visual,Search:None",
       max_height = 7,
     }),
     documentation = cmp.config.window.bordered({
       border = "rounded",
-      winhighlight = "Normal:Normal,FloatBorder:CmpGhostBorder,CursorLine:Visual,Search:None",
+      winhighlight = "Normal:Normal,FloatBorder:Normal,CursorLine:Visual,Search:None",
     }),
   },
   formatting = {
-      fields = { "kind", "abbr", "menu" },
+      fields = { "kind", "abbr" },
       format = function(entry, item)
-        item.menu = source_icons[entry.source.name] or ""
-
         if vim.tbl_contains({ 'path' }, entry.source.name) then
           local icon, hl_group = require('nvim-web-devicons').get_icon(entry.completion_item.label)
           if icon then

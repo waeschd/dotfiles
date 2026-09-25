@@ -28,4 +28,4 @@ require("github-theme").setup({
 })
 
 -- Activate ondedark per default
-vim.cmd.colorscheme("onedark")
+vim.cmd.colorscheme("github_dark")

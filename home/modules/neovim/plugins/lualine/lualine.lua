@@ -29,19 +29,18 @@ local function component_fg()
   return get_hex("Normal", "fg")
 end
 
+-- lualine.nvim re-runs this on every ColorScheme change
 local function build_lualine_theme()
-  local custom_ayu_dark = require("lualine.themes.ayu_dark")
+  local custom_ayu = require("lualine.themes.ayu_dark")
   local fg, bg = normal_fg(), normal_bg()
 
   for _, mode in ipairs({ "normal", "insert", "visual", "replace", "inactive" }) do
-    custom_ayu_dark[mode].c = { fg = fg, bg = bg }
-    custom_ayu_dark[mode].x = { fg = fg, bg = bg }
+    custom_ayu[mode].c = { fg = fg, bg = bg }
+    custom_ayu[mode].x = { fg = fg, bg = bg }
   end
 
-  return custom_ayu_dark
+  return custom_ayu
 end
-
-local lualine_theme = build_lualine_theme()
 -----------------------------------------------------------------------------------------------------
 local function seperator(opts)
   return {
@@ -363,7 +362,7 @@ require("lualine").setup({
     component_separators = "",
     section_separators = "",
     padding = 0,
-    theme = lualine_theme,
+    theme = build_lualine_theme,
     globalstatus = true,
     always_divide_middle = true,
     disabled_filetypes = {

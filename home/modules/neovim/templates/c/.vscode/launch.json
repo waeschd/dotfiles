@@ -17,17 +17,17 @@
     {
       "type": "cppdbg",
       "request": "launch",
-      "name": "Debug (cppdbg)",
+      "name": "Debug",
       "MIMode": "gdb",
-      "program": "${workspaceRoot}/test",
+      "program": "${workspaceRoot}/app.debug",
       "miDebuggerServerAddress": "localhost:1234",
       "stopAtConnect": true,
       "stopAtEntry": true,
       "cwd": "${workspaceRoot}",
       "setupCommands": [
-        { "text": "set architecture i386:x86-64", "ignoreFailures": false },
-        { "text": "source ${workspaceRoot}/.gdbinit", "ignoreFailures": false }
-      ]
+        { "text": "set architecture i386:x86-64", "ignoreFailures": false }
+      ],
+      "autorun": ["source ${workspaceRoot}/.gdbinit"]
     }
   ]
 }

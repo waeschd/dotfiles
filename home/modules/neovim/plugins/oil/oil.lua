@@ -8,7 +8,7 @@ require("oil").setup({
   confirmation = {
     border = "rounded",
     win_options = {
-      winhighlight = "Normal:OilConfigWindow,FloatBorder:OilConfigBorder",
+      winhighlight = "Normal:Normal,FloatBorder:Normal",
     },
   },
   view_options = {

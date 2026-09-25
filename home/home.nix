@@ -68,6 +68,7 @@
     figlet
     sshfs
     psmisc
+    file
   ];
 }
 

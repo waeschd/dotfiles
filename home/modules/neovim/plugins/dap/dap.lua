@@ -258,15 +258,22 @@ vim.keymap.set("n", "<S-Up>", function()
 end, { desc = "(Debug) Down one frame", silent = true })
 
 -- Highlights and Icons
-vim.fn.sign_define("DapBreakpoint", { text = "", texthl = "DapUIStop" })
-vim.fn.sign_define("DapBreakpointCondition", { text = "", texthl = "DapUIStop" })
-vim.fn.sign_define("DapBreakpointRejected", { text = "", texthl = "DapUIStop" })
-vim.fn.sign_define("DapLogPoint", { text = "", texthl = "DapUIScope" })
+vim.fn.sign_define("DapBreakpoint", { text = "", texthl = "DapBreakpoint" })
+vim.fn.sign_define("DapBreakpointCondition", { text = "", texthl = "DapBreakpoint" })
+vim.fn.sign_define("DapBreakpointRejected", { text = "", texthl = "DapBreakpoint" })
+vim.fn.sign_define("DapLogPoint", { text = "", texthl = "DapLogPoint" })
+vim.fn.sign_define("DapStopped", { text = "", texthl = "@variable.parameter.vimdoc", linehl = "DapStoppedBg" })
+
+local function set_dap_highlights()
+  local stopped_bg = vim.o.background == "light" and "#fdf1c4" or "#604918"
+  vim.api.nvim_set_hl(0, "DapStoppedBg", { bg = stopped_bg })
+  vim.api.nvim_set_hl(0, "DapBreakpoint", { link = "DiagnosticError" })
+  vim.api.nvim_set_hl(0, "DapLogPoint", { link = "DiagnosticInfo" })
+end
+
+set_dap_highlights()
 
 vim.api.nvim_create_autocmd("ColorScheme", {
   pattern = "*",
-  callback = function()
-    vim.api.nvim_set_hl(0, "DapStoppedBg", { bg = "#604918" })
-  end,
+  callback = set_dap_highlights,
 })
-vim.fn.sign_define("DapStopped", { text = "", texthl = "@variable.parameter.vimdoc", linehl = "DapStoppedBg" })
