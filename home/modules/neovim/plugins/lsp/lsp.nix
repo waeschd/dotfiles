@@ -14,6 +14,7 @@
   pkgs.vimPlugins.cmp-cmdline
   pkgs.vimPlugins.cmp_luasnip
   pkgs.vimPlugins.luasnip
+  pkgs.vimPlugins.lspkind-nvim
   {
     plugin = pkgs.vimPlugins.nvim-cmp;
     type = "lua";

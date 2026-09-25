@@ -7,6 +7,15 @@ local luasnip = require("luasnip")
 
 local select_opts = { behavior = cmp.SelectBehavior.Select }
 
+local kind_icons = require("lspkind").symbol_map
+
+local source_icons = {
+  nvim_lsp = "",
+  luasnip = "",
+  buffer = "",
+  path = "",
+}
+
 vim.api.nvim_create_autocmd("ColorScheme", {
   pattern = "*",
   callback = function()
@@ -74,8 +83,10 @@ cmp.setup({
     }),
   },
   formatting = {
-      fields = { "icon", "kind", "abbr" },
+      fields = { "kind", "abbr", "menu" },
       format = function(entry, item)
+        item.menu = source_icons[entry.source.name] or ""
+
         if vim.tbl_contains({ 'path' }, entry.source.name) then
           local icon, hl_group = require('nvim-web-devicons').get_icon(entry.completion_item.label)
           if icon then
@@ -84,7 +95,7 @@ cmp.setup({
             return item
           end
         end
-        item.kind = ""
+        item.kind = string.format("%s %s", kind_icons[item.kind] or "", item.kind)
         return item
       end
   },
