@@ -62,6 +62,10 @@
       shellcheck
       shfmt
 
+      # ---- Nix ---- (nixd LSP + nixfmt formatter)
+      nixd
+      nixfmt
+
       # ---- snacks.nvim ---- (dashboard's git-status terminal panel shells
       # out to these for its ASCII-art clock)
       figlet

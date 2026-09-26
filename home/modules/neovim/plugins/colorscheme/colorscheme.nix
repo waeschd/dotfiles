@@ -7,4 +7,5 @@
   }
 
   pkgs.vimPlugins.github-nvim-theme # shares config file
+  pkgs.vimPlugins.bamboo-nvim
 ]

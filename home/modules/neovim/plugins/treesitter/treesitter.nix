@@ -14,6 +14,7 @@
       fish
       rust
       javascript
+      nix
       zig
       latex
       markdown

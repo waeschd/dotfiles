@@ -7,6 +7,7 @@ vim.lsp.enable({
   "harper_ls",
   "jsonls",
   "bashls",
+  "nixd",
 })
 
 -- Harper adjustments
