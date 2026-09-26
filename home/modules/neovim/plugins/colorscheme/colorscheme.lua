@@ -27,8 +27,13 @@ require("github-theme").setup({
   },
 })
 
+require("catppuccin").setup({
+  flavour = "mocha",
+})
+
 -- Activate default colorscheme
 -- vim.cmd.colorscheme("onedark")
 -- vim.cmd.colorscheme("github_dark")
-vim.cmd.colorscheme("bamboo")
-vim.cmd.colorscheme("bamboo-vulgaris")
+vim.cmd.colorscheme("catppuccin")
+-- vim.cmd.colorscheme("bamboo")
+-- vim.cmd.colorscheme("bamboo-vulgaris")

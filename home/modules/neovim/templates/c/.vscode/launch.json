@@ -17,11 +17,23 @@
     {
       "type": "cppdbg",
       "request": "launch",
-      "name": "Debug",
+      "name": "Debug (GDB Remote)",
       "MIMode": "gdb",
       "program": "${workspaceRoot}/app.debug",
       "miDebuggerServerAddress": "localhost:1234",
       "stopAtConnect": true,
+      "cwd": "${workspaceRoot}",
+      "setupCommands": [
+        { "text": "set architecture i386:x86-64", "ignoreFailures": false }
+      ],
+      "autorun": ["source ${workspaceRoot}/.gdbinit"]
+    },
+    {
+      "type": "cppdbg",
+      "request": "launch",
+      "name": "Debug (GDB Launch)",
+      "MIMode": "gdb",
+      "program": "${workspaceRoot}/app.debug",
       "stopAtEntry": true,
       "cwd": "${workspaceRoot}",
       "setupCommands": [

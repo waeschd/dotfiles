@@ -259,7 +259,10 @@ end, { desc = "(Debug) Down one frame", silent = true })
 
 -- Highlights and Icons
 local function set_dap_highlights()
-  vim.api.nvim_set_hl(0, "DapStoppedBg", { link = "NvimDapVirtualTextChanged" })
+  local virtual_text_hl = vim.api.nvim_get_hl(0, { name = "NvimDapVirtualTextChanged", link = false })
+  local normal_hl = vim.api.nvim_get_hl(0, { name = "Normal", link = false })
+  local stopped_bg = virtual_text_hl.bg or (vim.o.background == "light" and "#ffdf61" or "#6e6540")
+  vim.api.nvim_set_hl(0, "DapStoppedBg", { bg = stopped_bg, fg = normal_hl.fg })
   vim.api.nvim_set_hl(0, "DapBreakpoint", { link = "DiagnosticError" })
   vim.api.nvim_set_hl(0, "DapLogPoint", { link = "DiagnosticInfo" })
 
